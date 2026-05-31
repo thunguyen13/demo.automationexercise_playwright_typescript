@@ -40,12 +40,19 @@ export class ApiClient {
       }
     }
 
-    return {
+    const handledResponse = {
       status: response.status(),
       headers: response.headers(),
       body: body,
       raw: response,
     };
+
+    console.log(`[HANDLED RESPONSE] \n${JSON.stringify({
+      status: handledResponse.status,
+      headers: handledResponse.headers,
+      body: handledResponse.body,
+    }, null, 2)}`);
+    return handledResponse;
   }
 
   /**
@@ -55,6 +62,7 @@ export class ApiClient {
    * @returns - The result of the API request, which is processed by the handleResponse method to extract the status code, headers, and body of the response.
    */
   async get(endpoint: string, options: RequestOption ["Get"] = {}) {
+    console.log(`[GET] Sending request to: ${this.baseUrl + endpoint} with options: ${JSON.stringify(options, null, 2)}`);
     const response = await this.request.get(this.baseUrl + endpoint, options);
     return this.handleResponse(response);
   }
@@ -66,6 +74,7 @@ export class ApiClient {
    * @returns - The result of the POST request, which is processed by the handleResponse method to extract the status code, headers, and body of the response.
    */
   async post(endpoint: string, options: RequestOption ["Post"] = {}) {
+    console.log(`[POST] Sending request to: ${this.baseUrl + endpoint} with options: ${JSON.stringify(options, null, 2)}`);
     const response = await this.request.post(this.baseUrl + endpoint, options);
     return this.handleResponse(response);
   }
@@ -77,6 +86,7 @@ export class ApiClient {
    * @returns - The result of the PUT request, which is processed by the handleResponse method to extract the status code, headers, and body of the response.
    */
   async put(endpoint: string, options: RequestOption ["Put"] = {}) {
+    console.log(`[PUT] Sending request to: ${this.baseUrl + endpoint} with options: ${JSON.stringify(options, null, 2)}`);
     const response = await this.request.put(this.baseUrl + endpoint, options);
     return this.handleResponse(response);
   }
@@ -88,6 +98,7 @@ export class ApiClient {
    * @returns - The result of the DELETE request, which is processed by the handleResponse method to extract the status code, headers, and body of the response.
    */
   async delete(endpoint: string, options: RequestOption ["Delete"] = {}) {
+    console.log(`[DELETE] Sending request to: ${this.baseUrl + endpoint} with options: ${JSON.stringify(options, null, 2)}`);
     const response = await this.request.delete(
       this.baseUrl + endpoint,
       options

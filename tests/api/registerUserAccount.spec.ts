@@ -1,7 +1,7 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { CleanUpUser, test } from "@fixtures/api/account";
 import { getValueFieldByPath } from "@utils/helpers";
-import { duplicateEmailRegisterData, invalidRegisterData, missingFieldRegisterData, validRegisterData } from "@data/accountData";
+import { duplicateEmailRegisterData, invalidRegisterData, missingFieldRegisterData, validRegisterData } from "@data/api/accountData";
 import { ApiResponse } from "@core/api/ApiClient";
 
 

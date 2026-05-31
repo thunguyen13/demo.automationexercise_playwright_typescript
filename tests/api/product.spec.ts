@@ -119,12 +119,12 @@ test.describe("Brand List API", () => {
   });
 });
 
-test.describe("Search Product API", () => {
+test.describe.only("Search Product API", () => {
   type SearchProductRecord = {
     keyword: string;
     hasResult: boolean;
   };
-  const records = getDataFromJsonFile<SearchProductRecord>("searchProduct.json");
+  const records = getDataFromJsonFile<SearchProductRecord>("api/searchProduct.json");
   for (const record of records) {
     test(`Should retrieve searched products by name "${record.keyword}"`, async ({ productService }) => {
       const response = await productService.postSearchProducts({ search_product: record.keyword });
