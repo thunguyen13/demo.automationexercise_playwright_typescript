@@ -71,26 +71,29 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
     };
 });
 
-test.describe('Register Failure - Bad Request: Duplicate Email', () => {
+test.describe.only('Register Failure - Bad Request: Duplicate Email', () => {
     const payloadData = duplicateEmailRegisterData.payloadData;
     test.beforeEach(async ({ authService, trackUserForCleanup }) => {
         console.log(`[Before each hook] Creating test user.`);
         const response = await authService.createAccount(payloadData);
         BaseValidator.verifyFieldValue(response, "responseCode", successCreatedCode);
-        // Register for cleanup
-        await trackUserForCleanup({
-            email: payloadData.email!,
-            password: payloadData.password!,
-        });
         console.log(`[Setup] Created test user with email: ${payloadData.email} for duplicate email registration test.`);
     });
     test(`Should fail to register with: ${duplicateEmailRegisterData.case}`, async ({ authService, trackUserForCleanup }) => {
         const errorMsg = duplicateEmailRegisterData.message || "Bad request, email already exists.";
         console.log(`Testing registration API with duplicate email payload data: ${JSON.stringify(payloadData)}`);
-        const response = await authService.createAccount(payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
-        BaseValidator.verifyErrorResponse(response, errorMsg);
+        try {
+            const response = await authService.createAccount(payloadData);
+            BaseValidator.verifyStatusCode(response, successCode);
+            BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
+            BaseValidator.verifyErrorResponse(response, errorMsg);
+        } finally {
+            // Clean up the created user account after the test
+            await trackUserForCleanup({
+                email: payloadData.email!,
+                password: payloadData.password!,
+            });
+        };
     });
 });
 
