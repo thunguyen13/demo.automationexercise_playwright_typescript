@@ -71,7 +71,7 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
     };
 });
 
-test.describe.only('Register Failure - Bad Request: Duplicate Email', () => {
+test.describe('Register Failure - Bad Request: Duplicate Email', () => {
     const payloadData = duplicateEmailRegisterData.payloadData;
     test.beforeEach(async ({ authService, trackUserForCleanup }) => {
         console.log(`[Before each hook] Creating test user.`);

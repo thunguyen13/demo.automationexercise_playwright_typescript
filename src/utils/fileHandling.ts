@@ -10,7 +10,7 @@ const DATA_FOLDER = path.join(ROOT_FOLDER, 'src', 'data');
  * @param filePath - path to the file from the data folder, e.g. "api/registerUserAccount.json"
  * @returns json data
  */
-export function getDataFromJsonFile<T>(filePath: string): T|T[] {
+export function getDataFromJsonFile<T>(filePath: string): T {
     const fullPath = path.join(DATA_FOLDER, filePath);
     try {
         return JSON.parse(fs.readFileSync(fullPath, 'utf-8'));

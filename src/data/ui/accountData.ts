@@ -1,4 +1,3 @@
-import { invalidRegisterData } from './../accountData';
 import { requiredFields } from "@pages/SignUpInformationPage";
 import { UserInfo } from '@services/AuthService';
 import { buildUserData, generateUniqueEmailAndName } from "@utils/dataHelpers";
