@@ -141,11 +141,14 @@ test.describe('Register Unsupported HTTP Method', () => {
 });
 
 async function trackUserForCleanUpIfCreated(response: ApiResponse, account: { email: string, password: string }, trackUserForCleanup: (u: CleanUpUser) => Promise<void>) {
-    if (response.body == null)
-        return;
+    if (response.body == null) {
+        throw new Error("[Unexpected Response] Response body is null. Cannot determine if account was created. Email: " + account.email);
+    }
     const responseCode = getValueFieldByPath(response.body, "responseCode");
-    if (responseCode !== successCreatedCode)
+    if (responseCode !== successCreatedCode) {
+        console.log(`[No Unexpected Success] Registration failed as expected. No account to clean up for email: ${account.email}.`);
         return;
+    }
     console.log(`[Unexpected Success] Registration succeeded. Add account to the cleanup queue by email: ${account.email}.`);
     await trackUserForCleanup({
         email: account.email,
