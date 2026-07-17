@@ -1,7 +1,7 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { CleanUpUser, test } from "@fixtures/api/account";
 import { getValueFieldByPath } from "@utils/helpers";
-import { duplicateEmailRegisterData, invalidRegisterData, missingFieldRegisterData, validRegisterData } from "@data/accountData";
+import { duplicateEmailRegisterData, invalidRegisterData, missingFieldRegisterData, validRegisterData } from "@data/api/accountData";
 import { ApiResponse } from "@core/api/ApiClient";
 
 
@@ -77,20 +77,23 @@ test.describe('Register Failure - Bad Request: Duplicate Email', () => {
         console.log(`[Before each hook] Creating test user.`);
         const response = await authService.createAccount(payloadData);
         BaseValidator.verifyFieldValue(response, "responseCode", successCreatedCode);
-        // Register for cleanup
-        await trackUserForCleanup({
-            email: payloadData.email!,
-            password: payloadData.password!,
-        });
         console.log(`[Setup] Created test user with email: ${payloadData.email} for duplicate email registration test.`);
     });
     test(`Should fail to register with: ${duplicateEmailRegisterData.case}`, async ({ authService, trackUserForCleanup }) => {
         const errorMsg = duplicateEmailRegisterData.message || "Bad request, email already exists.";
         console.log(`Testing registration API with duplicate email payload data: ${JSON.stringify(payloadData)}`);
-        const response = await authService.createAccount(payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
-        BaseValidator.verifyErrorResponse(response, errorMsg);
+        try {
+            const response = await authService.createAccount(payloadData);
+            BaseValidator.verifyStatusCode(response, successCode);
+            BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
+            BaseValidator.verifyErrorResponse(response, errorMsg);
+        } finally {
+            // Clean up the created user account after the test
+            await trackUserForCleanup({
+                email: payloadData.email!,
+                password: payloadData.password!,
+            });
+        };
     });
 });
 
@@ -138,11 +141,14 @@ test.describe('Register Unsupported HTTP Method', () => {
 });
 
 async function trackUserForCleanUpIfCreated(response: ApiResponse, account: { email: string, password: string }, trackUserForCleanup: (u: CleanUpUser) => Promise<void>) {
-    if (response.body == null)
-        return;
+    if (response.body == null) {
+        throw new Error("[Unexpected Response] Response body is null. Cannot determine if account was created. Email: " + account.email);
+    }
     const responseCode = getValueFieldByPath(response.body, "responseCode");
-    if (responseCode !== successCreatedCode)
+    if (responseCode !== successCreatedCode) {
+        console.log(`[No Unexpected Success] Registration failed as expected. No account to clean up for email: ${account.email}.`);
         return;
+    }
     console.log(`[Unexpected Success] Registration succeeded. Add account to the cleanup queue by email: ${account.email}.`);
     await trackUserForCleanup({
         email: account.email,

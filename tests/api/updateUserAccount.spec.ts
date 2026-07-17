@@ -1,7 +1,7 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { test } from "@fixtures/api/account";
 import { UserIdentity, UserInfo } from "@services/AuthService";
-import { validAccInfo, successUpdateData, badRequestUpdateData, notFoundUpdateData, invalidUpdateData } from "@data/accountData";
+import { validAccInfo, successUpdateData, badRequestUpdateData, notFoundUpdateData, invalidUpdateData } from "@data/api/accountData";
 
 const endpoint = "/updateAccount";
 const testUser: UserInfo = validAccInfo;

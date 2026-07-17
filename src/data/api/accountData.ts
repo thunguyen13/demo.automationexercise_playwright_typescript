@@ -46,7 +46,7 @@ export const validAccInfo: UserInfo = {
   zipcode: "12345",
   state: "Test State",
   city: "Test City",
-  mobile_number: "1234567890",
+  mobile_number: "0901234567",
 };
 
 export const badRequestData: Array<TypeLogin> = [
