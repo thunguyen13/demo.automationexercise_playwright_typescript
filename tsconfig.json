@@ -13,7 +13,8 @@
       "@fixtures/*": ["src/fixtures/*"],
       "@data/*": ["src/data/*"],
       "@models/*": ["src/models/*"],
-      "@components/*": ["src/components/*"]
+      "@components/*": ["src/components/*"],
+      "@config/*": ["src/config/*"]
     },
     "strict": true,
     "esModuleInterop": true,

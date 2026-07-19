@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { getVietnameseTimestamp } from '@utils/helpers';
+import { DEFAULT_URL } from '@config/env.config';
 import path from 'path';
 
 /**
@@ -26,14 +27,16 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [
-      'html', { outputFolder: outputDir, open: 'never' }
+      'html', { 
+        outputFolder: process.env.CI ? undefined : outputDir, 
+        open: 'never' }
     ],
   ],
-  timeout: 60000,
+  timeout: 120000,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'https://automationexercise.com',
+    baseURL: DEFAULT_URL.BASE_URL,
 
     screenshot: 'on',
 
@@ -49,10 +52,26 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'ui',
+      name: 'ui-chromium',
       testDir: './tests/ui',
       use: { 
         ...devices['Desktop Chrome'],
+        viewport: { width: 1280, height: 630 },
+      },
+    },
+    {
+      name: 'ui-firefox',
+      testDir: './tests/ui',
+      use: { 
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1280, height: 630 },
+      },
+    },
+    {
+      name: 'ui-webkit',
+      testDir: './tests/ui',
+      use: { 
+        ...devices['Desktop Safari'],
         viewport: { width: 1280, height: 630 },
       },
     },
