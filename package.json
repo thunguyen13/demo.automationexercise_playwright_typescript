@@ -6,8 +6,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test:api": "npx playwright test --project=api",
-    "test:ui": "npx playwright test --project=ui"
-
+    "test:ui-chrome": "npx playwright test --project=ui-chromium",
+    "test:ui-firefox": "npx playwright test --project=ui-firefox",
+    "test:ui-webkit": "npx playwright test --project=ui-webkit",
+    "test:ui": "npx playwright test --project=ui-chromium --project=ui-firefox --project=ui-webkit"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,7 @@
   "dependencies": {
     "ajv": "^8.18.0",
     "csv-parse": "^6.2.1",
+    "dotenv": "^17.4.2",
     "npm": "^11.11.1"
   }
 }

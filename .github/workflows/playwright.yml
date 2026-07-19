@@ -1,0 +1,63 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+env:
+  BASE_URL: ${{ vars.BASE_URL }}
+jobs:
+  api_tests:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ vars.API_URL }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+      cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run Playwright API tests
+      run: npm run test:api
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-api
+        path: playwright-report/
+        retention-days: 30
+  ui_tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+      cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Cache Playwright Browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright UI tests
+      run: npm run test:ui-${{ matrix.browser }}
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-ui-${{ matrix.browser }}
+        path: playwright-report/
+        retention-days: 30

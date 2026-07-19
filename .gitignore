@@ -15,6 +15,7 @@ allure-results/
 # env
 *.env.*
 !.env.example
+*.env
 
 # logs
 .log
@@ -23,7 +24,7 @@ allure-results/
 auth/storage/
 
 # github
-.github/
+#.github/
 
 # draft
 *.draft.*
