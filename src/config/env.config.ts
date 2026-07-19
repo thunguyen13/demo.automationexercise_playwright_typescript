@@ -13,9 +13,12 @@ function getEnv(key: string, defaultValue?: string): string {
   throw new Error(`Environment variable ${key} is not defined and no default value was provided.`);
 }
 
-export const ENV = {
+export const DEFAULT_URL = {
     BASE_URL: getEnv('BASE_URL', 'https://automationexercise.com'),
-    API_URL: getEnv('API_URL', '/api'),
+    API_URL: getEnv('API_URL', 'https://automationexercise.com/api'),
+}
+
+export const DEFAULT_ACCOUNT = {
     EMAIL: getEnv('EMAIL'),
     PASSWORD: getEnv('PASSWORD'),
 }

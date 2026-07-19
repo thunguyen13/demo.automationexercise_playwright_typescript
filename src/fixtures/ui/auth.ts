@@ -1,6 +1,6 @@
 import { test as apiTest } from "@fixtures/api/account";
 import { test as base, expect, mergeTests } from "@playwright/test";
-import { abortRequest, blockAds } from "@utils/networkHelpers";
+import { blockAds } from "@utils/networkHelpers";
 
 interface UIAuthFixtures {
     blockAds: void

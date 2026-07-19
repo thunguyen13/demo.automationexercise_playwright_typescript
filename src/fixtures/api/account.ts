@@ -1,7 +1,7 @@
 import { ApiClient } from "@core/api/ApiClient";
 import { AuthService } from "@services/AuthService";
 import { test as base } from "@playwright/test";
-import { ENV } from "@config/env.config";
+import { DEFAULT_URL } from "@config/env.config";
 
 export type CleanUpUser = {
   email: string | null;
@@ -15,7 +15,7 @@ interface Fixtures {
 
 export const test = base.extend<Fixtures>({
   apiClient: async ({ request }, use) => {
-    const baseUrl = ENV.API_URL;
+    const baseUrl = DEFAULT_URL.API_URL;
     const apiClient = new ApiClient(request, baseUrl);
     await use(apiClient);
   },

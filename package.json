@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test:api": "npx playwright test --project=api",
-    "test:ui-chrome": "npx playwright test --project=ui-chromium",
+    "test:ui-chromium": "npx playwright test --project=ui-chromium",
     "test:ui-firefox": "npx playwright test --project=ui-firefox",
     "test:ui-webkit": "npx playwright test --project=ui-webkit",
     "test:ui": "npx playwright test --project=ui-chromium --project=ui-firefox --project=ui-webkit"

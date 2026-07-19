@@ -1,7 +1,7 @@
 import { test as base } from '@playwright/test';
 import { ApiClient } from '@core/api/ApiClient';
 import { ProductService } from 'src/services/ProductService';
-import { ENV } from '@config/env.config';
+import { DEFAULT_URL } from '@config/env.config';
 
 interface Fixtures {
     apiClient: ApiClient;
@@ -10,7 +10,7 @@ interface Fixtures {
 
 export const test = base.extend<Fixtures>({
     apiClient: async({ request }, use) => {
-        const baseUrl = ENV.API_URL;
+        const baseUrl = DEFAULT_URL.API_URL;
         const client = new ApiClient(request, baseUrl);
         await use(client);
     },

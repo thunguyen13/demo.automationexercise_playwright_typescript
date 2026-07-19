@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { getVietnameseTimestamp } from '@utils/helpers';
-import { ENV } from '@config/env.config';
+import { DEFAULT_URL } from '@config/env.config';
 import path from 'path';
 
 /**
@@ -36,7 +36,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: ENV.BASE_URL,
+    baseURL: DEFAULT_URL.BASE_URL,
 
     screenshot: 'on',
 
