@@ -23,9 +23,9 @@ test.describe('Register Success', () => {
                 email: data.payloadData.email!,
                 password: data.payloadData.password!,
             });
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", successCreatedCode);
-            BaseValidator.verifyFieldValue(response, "message", successMsg);
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", successCreatedCode);
+            BaseValidator.validateFieldValue(response, "message", successMsg);
         });
     };
 });
@@ -45,9 +45,9 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
                 }, 
                 trackUserForCleanup
             );
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
-            BaseValidator.verifyErrorResponse(response, errorMsg);
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
+            BaseValidator.validateErrorResponse(response, errorMsg);
         });
     };
     for (const data of invalidRegisterData) {
@@ -64,9 +64,9 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
                 }, 
                 trackUserForCleanup
             );
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
-            BaseValidator.verifyErrorResponse(response, errorMsg); 
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
+            BaseValidator.validateErrorResponse(response, errorMsg); 
         });
     };
 });
@@ -76,7 +76,7 @@ test.describe('Register Failure - Bad Request: Duplicate Email', () => {
     test.beforeEach(async ({ authService, trackUserForCleanup }) => {
         console.log(`[Before each hook] Creating test user.`);
         const response = await authService.createAccount(payloadData);
-        BaseValidator.verifyFieldValue(response, "responseCode", successCreatedCode);
+        BaseValidator.validateFieldValue(response, "responseCode", successCreatedCode);
         console.log(`[Setup] Created test user with email: ${payloadData.email} for duplicate email registration test.`);
     });
     test(`Should fail to register with: ${duplicateEmailRegisterData.case}`, async ({ authService, trackUserForCleanup }) => {
@@ -84,9 +84,9 @@ test.describe('Register Failure - Bad Request: Duplicate Email', () => {
         console.log(`Testing registration API with duplicate email payload data: ${JSON.stringify(payloadData)}`);
         try {
             const response = await authService.createAccount(payloadData);
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
-            BaseValidator.verifyErrorResponse(response, errorMsg);
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
+            BaseValidator.validateErrorResponse(response, errorMsg);
         } finally {
             // Clean up the created user account after the test
             await trackUserForCleanup({
@@ -113,8 +113,8 @@ test.describe('Register Unsupported HTTP Method', () => {
             userAccount, 
             trackUserForCleanup
         );
-        BaseValidator.verifyStatusCode(response, unsupportedMethodCode);
-        BaseValidator.verifyFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "GET"));
+        BaseValidator.validateStatusCode(response, unsupportedMethodCode);
+        BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "GET"));
     });
     test(`Should fail to register with unsupported HTTP method: PUT`, async ({ apiClient, trackUserForCleanup }) => {
         console.log(`Testing registration API with unsupported HTTP method: GET and payload data: ${JSON.stringify(payloadData.form)}`);
@@ -124,8 +124,8 @@ test.describe('Register Unsupported HTTP Method', () => {
             userAccount, 
             trackUserForCleanup
         );
-        BaseValidator.verifyStatusCode(response, unsupportedMethodCode);
-        BaseValidator.verifyFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "PUT"));
+        BaseValidator.validateStatusCode(response, unsupportedMethodCode);
+        BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "PUT"));
     });
     test(`Should fail to register with unsupported HTTP method: DELETE`, async ({ apiClient, trackUserForCleanup }) => {
         console.log(`Testing registration API with unsupported HTTP method: GET and payload data: ${JSON.stringify(payloadData.form)}`);
@@ -135,8 +135,8 @@ test.describe('Register Unsupported HTTP Method', () => {
             userAccount, 
             trackUserForCleanup
         );
-        BaseValidator.verifyStatusCode(response, unsupportedMethodCode);
-        BaseValidator.verifyFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "DELETE"));
+        BaseValidator.validateStatusCode(response, unsupportedMethodCode);
+        BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "DELETE"));
     })
 });
 

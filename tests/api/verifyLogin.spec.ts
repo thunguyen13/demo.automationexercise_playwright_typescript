@@ -23,16 +23,16 @@ test.beforeAll(async ({ authService }, testInfo) => {
 });
 
 test.describe("Verify Success Login API", () => {
-    test("Should verify login success with valid credentials",async ({ authService }) => {
+    test("Should Verify login success with valid credentials",async ({ authService }) => {
         const userIdentity: UserIdentity = {
             email: testUser.email,
             password: testUser.password
         };
         console.log(`Testing login with valid credentials: email: ${userIdentity.email} and password: ${userIdentity.password}`);
         const response = await authService.verifyLogin(userIdentity);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", successCode);
-        BaseValidator.verifyFieldValue(response, "message", successMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", successCode);
+        BaseValidator.validateFieldValue(response, "message", successMsg);
     });
 });
 
@@ -44,9 +44,9 @@ test.describe("Verify Failed Login API", () => {
             };
             console.log(`Testing login with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.post(endpoint, payloadData);
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", badRequestCode);
-            BaseValidator.verifyErrorResponse(response, badRequestMsg);
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
+            BaseValidator.validateErrorResponse(response, badRequestMsg);
         });
     }
     for (const data of notFoundData) {
@@ -56,9 +56,9 @@ test.describe("Verify Failed Login API", () => {
             };
             console.log(`Testing login with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.post(endpoint, payloadData);
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", notFoundCode);
-            BaseValidator.verifyErrorResponse(response, notFoundMsg);
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", notFoundCode);
+            BaseValidator.validateErrorResponse(response, notFoundMsg);
         });
     }
 });
@@ -73,23 +73,23 @@ test.describe("Verify API Login retrieves error message for unsupported HTTP met
     test("Should retrieve error message for unsupported HTTP method: GET", async ({ apiClient }) => {
         console.log(`Testing login with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.get(endpoint, payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", unsupportedMethodCode);
-        BaseValidator.verifyErrorResponse(response, unsupportedMethodMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
+        BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: PUT", async ({ apiClient }) => {
         console.log(`Testing login with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.put(endpoint, payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", unsupportedMethodCode);
-        BaseValidator.verifyErrorResponse(response, unsupportedMethodMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
+        BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: DELETE", async ({ apiClient }) => {
         console.log(`Testing login with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.delete(endpoint, payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", unsupportedMethodCode);
-        BaseValidator.verifyErrorResponse(response, unsupportedMethodMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
+        BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
 });
 

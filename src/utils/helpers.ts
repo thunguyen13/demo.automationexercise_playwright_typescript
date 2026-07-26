@@ -30,7 +30,7 @@ export function cleanUndefinedValues(obj: Record<any, any>) {
 }
 
 /**
- * To retrieve a value from an object based on a specified path
+ * To retrieve a value from an object based on a specified path, e.g. "user.address[0]["street"]
  * @param obj object containing the value to be retrieved
  * @param path string representing the path to the desired value, using dot notation for nested properties and square brackets for array indices (e.g., "user.address[0].street")
  * @returns value at the specified path in the object, or undefined if the path does not exist

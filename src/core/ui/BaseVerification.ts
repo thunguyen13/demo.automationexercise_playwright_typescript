@@ -1,48 +1,85 @@
 import { expect, Locator, Page } from "@playwright/test";
 
+type VerificationOptions = {
+    timeout?: number;
+    soft?: boolean;
+};
+
 
 export class BaseVerification {
+
+    static getExpect(soft: boolean = false) {
+        return soft ? expect.soft : expect;
+    }
 
     static async expectWithLog(
         expectation: () => Promise<void> | void,
         message: string,
-        timeout: number = 5000
     ): Promise<void> {
         await expectation();
         console.log(`[VERIFICATION] => PASSED: ${message}`);
     }
-    static async verifyPageTitle(page: Page, expectedTitle: string, timeout: number = 5000) {
-        // await expect(page).toHaveTitle(expectedTitle, { timeout });
+
+    /**
+     * To verify the title of the page
+     * @param page - playwright page object
+     * @param expectedTitle - expected title of the page
+     * @param options - Optional parameters for verification
+     */
+    static async verifyPageTitle(page: Page, expectedTitle: string, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
         const errorMsg = `Expected page title to be "${expectedTitle}"`;
-        await this.expectWithLog(() => expect(page, errorMsg).toHaveTitle(expectedTitle, { timeout }), `${errorMsg}`);
+        await this.expectWithLog(() => expectFn(page, errorMsg).toHaveTitle(expectedTitle, { timeout: options.timeout }), `${errorMsg}`);
     }
     
-    static async verifyText(locator: Locator, expectedText: string | RegExp, timeout: number = 5000) {
+    /**
+     * To verify the text of a locator
+     * @param locator - playwright locator object
+     * @param expectedText - expected text of the locator
+     * @param options - Optional parameters for verification
+     */
+    static async verifyText(locator: Locator, expectedText: string | RegExp, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
         const locatorStr = locator.toString();
         const errorVisibleMsg = `Expected locator "${locatorStr}" to be visible`;
-        // await expect(locator, errorVisibleMsg).toBeVisible({ timeout });
-        await this.expectWithLog(() => expect(locator, errorVisibleMsg).toBeVisible({ timeout }), errorVisibleMsg);
+        await this.expectWithLog(() => expectFn(locator, errorVisibleMsg).toBeVisible({ timeout: options.timeout }), errorVisibleMsg);
         const errorHaveTextMsg = `Expected locator "${locatorStr}" to have text "${expectedText}"`;
-        // await expect(locator, errorHaveTextMsg).toHaveText(expectedText, { timeout });
-        await this.expectWithLog(() => expect(locator, errorHaveTextMsg).toHaveText(expectedText, { timeout }), errorHaveTextMsg);
+        await this.expectWithLog(() => expectFn(locator, errorHaveTextMsg).toHaveText(expectedText, { timeout: options.timeout }), errorHaveTextMsg);
     }
 
-    static async verifyCurrentUrl(page: Page, expectedUrl: string | RegExp, timeout: number = 5000) {
+    /**
+     * To verify the current URL of the page
+     * @param page - playwright page object
+     * @param expectedUrl - expected URL of the page
+     * @param options - Optional parameters for verification
+     */
+    static async verifyCurrentUrl(page: Page, expectedUrl: string | RegExp, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
         const errorMsg = `Expected current URL to match "${expectedUrl}"`;
-        // await expect(page, errorMsg).toHaveURL(expectedUrl, { timeout });
-        await this.expectWithLog(() => expect(page, errorMsg).toHaveURL(expectedUrl, { timeout }), errorMsg);
+        await this.expectWithLog(() => expectFn(page, errorMsg).toHaveURL(expectedUrl, { timeout: options.timeout }), errorMsg);
     }
 
-    static async verifyFieldIsInvalid(fieldLocator: Locator, timeout: number = 5000) {
+    /**
+     * To verify if a field is invalid (validated by browser)
+     * @param fieldLocator - playwright locator object
+     * @param options - Optional parameters for verification
+     */
+    static async verifyFieldIsInvalid(fieldLocator: Locator, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
         const errorMsg = `Expected field "${fieldLocator.toString()}" to be invalid (validated by browser)`;
-        const isInvalid = await fieldLocator.evaluate(el => el.matches(":invalid"), { timeout });
-        // expect(isInvalid, errorMsg).toBe(true);
-        await this.expectWithLog(() => expect(isInvalid, errorMsg).toBe(true), errorMsg);
+        const isInvalid = await fieldLocator.evaluate(el => el.matches(":invalid"), { timeout: options.timeout });
+        await this.expectWithLog(() => expectFn(isInvalid, errorMsg).toBe(true), errorMsg);
     }
 
-    static async verifyFieldValue(fieldLocator: Locator, expectedValue: string, timeout: number = 5000) {
+    /**
+     * To verify the value of a field
+     * @param fieldLocator - playwright locator object
+     * @param expectedValue - expected value of the field
+     * @param options - Optional parameters for verification
+     */
+    static async verifyFieldValue(fieldLocator: Locator, expectedValue: string, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
         const errorMsg = `Expected field "${fieldLocator.toString()}" to have value "${expectedValue}"`;
-        // await expect(fieldLocator, errorMsg).toHaveValue(expectedValue, { timeout });
-        await this.expectWithLog(() => expect(fieldLocator, errorMsg).toHaveValue(expectedValue, { timeout }), errorMsg);
+        await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toHaveValue(expectedValue, { timeout: options.timeout }), errorMsg);
     }
 }

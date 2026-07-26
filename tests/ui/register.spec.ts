@@ -71,7 +71,7 @@ test.describe("Registration flow with existing email", () => {
     test.beforeEach(async ({ authService, trackUserForCleanup }) => {
         console.log(`[Before each hook] Creating test user: ${accInfo.email}`);
         const response = await authService.createAccount(accInfo);
-        BaseValidator.verifyFieldValue(response, "responseCode", 201);
+        BaseValidator.validateFieldValue(response, "responseCode", 201);
         // Register for cleanup
         await trackUserForCleanup({
             email: accInfo.email!,
