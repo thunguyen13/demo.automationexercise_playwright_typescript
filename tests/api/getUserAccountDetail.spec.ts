@@ -27,10 +27,10 @@ test.describe("Success Get User Detail By Email API", () => {
         delete userDetail.password;
         console.log(`Testing get user detail by email: ${email}`);
         const response = await authService.getUserDetailByEmail({ email });
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifySchema(response, userDetailSchema);
-        BaseValidator.verifyFieldValue(response, "responseCode", successCode);
-        BaseValidator.verifyObjectContains(response, "user", userDetail);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateSchema(response, userDetailSchema, { soft: true });
+        BaseValidator.validateFieldValue(response, "responseCode", successCode);
+        BaseValidator.validateObjectContains(response, "user", userDetail);
     });
 });
 
@@ -42,9 +42,9 @@ test.describe("Failed Get User Detail By Email API", () => {
             };
             console.log(`Testing getUserDetail with payload: ${JSON.stringify(payloadData.params)}`);
             const response = await apiClient.get(endpoint, payloadData);
-            BaseValidator.verifyStatusCode(response, successCode);
-            BaseValidator.verifyFieldValue(response, "responseCode", data.code || defaultErrorCode);
-            BaseValidator.verifyErrorResponse(response, data.message || defaultErrorMsg);
+            BaseValidator.validateStatusCode(response, successCode);
+            BaseValidator.validateFieldValue(response, "responseCode", data.code || defaultErrorCode);
+            BaseValidator.validateErrorResponse(response, data.message || defaultErrorMsg);
         });
     }
 });
@@ -58,23 +58,23 @@ test.describe("Verify API Get User Detail retrieves error message for unsupporte
     test("Should retrieve error message for unsupported HTTP method: POST", async ({ apiClient }) => {
         console.log(`Testing getUserDetail with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.params)}`);
         const response = await apiClient.post(endpoint, payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", unsupportedMethodCode);
-        BaseValidator.verifyErrorResponse(response, unsupportedMethodMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
+        BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: PUT", async ({ apiClient }) => {
         console.log(`Testing getUserDetail with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.params)}`);
         const response = await apiClient.put(endpoint, payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", unsupportedMethodCode);
-        BaseValidator.verifyErrorResponse(response, unsupportedMethodMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
+        BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: DELETE", async ({ apiClient }) => {
         console.log(`Testing getUserDetail with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.params)}`);
         const response = await apiClient.delete(endpoint, payloadData);
-        BaseValidator.verifyStatusCode(response, successCode);
-        BaseValidator.verifyFieldValue(response, "responseCode", unsupportedMethodCode);
-        BaseValidator.verifyErrorResponse(response, unsupportedMethodMsg);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
+        BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
 });
 

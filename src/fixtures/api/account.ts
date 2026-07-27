@@ -43,7 +43,7 @@ export const test = base.extend<Fixtures>({
       };
       const res = await authService.deleteAccount(payload);
       console.log(
-        `[Clean up] Aptempted to delete test user with email: ${user.email}. Response code: ${res.body.responseCode}.`
+        `[Clean up] Aptempted to delete test user with email: ${user.email}. Response code in body: ${res.body.responseCode}.`
       );
     } else {
         console.log(
