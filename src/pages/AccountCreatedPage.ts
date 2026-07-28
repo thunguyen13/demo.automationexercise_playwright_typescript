@@ -1,5 +1,5 @@
 import { BasePage } from "@core/ui/BasePage";
-import { BaseVerification } from "@core/ui/BaseVerification";
+import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
@@ -32,10 +32,10 @@ export class AccountCreatedPage extends BasePage {
 
     /*** VERIFICATION METHODS ***/
     @step("Verifying the content of the Account Created page with expected header and messages")
-    async verifyPageContent(timeout = 5000) {
-        await BaseVerification.verifyText(this.textLocators.header, this.HEADER, timeout);
+    async verifyPageContent(options: VerificationOptions = {}) {
+        await BaseVerification.verifyText(this.textLocators.header, this.HEADER, options);
         for (let i = 0; i < this.MESSAGES.length; i++) {
-            await BaseVerification.verifyText(this.textLocators.messages.nth(i), this.MESSAGES[i], timeout);
+            await BaseVerification.verifyText(this.textLocators.messages.nth(i), this.MESSAGES[i], options);
         }
     }
 }

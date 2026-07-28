@@ -1,5 +1,5 @@
 import { BasePage } from "@core/ui/BasePage";
-import { BaseVerification } from "@core/ui/BaseVerification";
+import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
@@ -57,29 +57,29 @@ export class LogInPage extends BasePage {
 
     /*** VERIFICATION METHODS ***/
     @step("Verify '{0}' form header is displayed correctly")
-    async verifyFormHeader(form: "login" | "signup", timeout = 5000) {
+    async verifyFormHeader(form: "login" | "signup", options: VerificationOptions = {}) {
         const headerLocator = form === "login" ? this.logInForm.header : this.signUpForm.header;
         const headerText = form === "login" ? this.LOGIN_FORM_HEADER_TEXT : this.SIGNUP_FORM_HEADER_TEXT;
-        await BaseVerification.verifyText(headerLocator, headerText, timeout);
+        await BaseVerification.verifyText(headerLocator, headerText, options);
     }
 
     @step("Verify error message for '{0}' form is displayed correctly")
-    async verifyErrorMessage(form: "login" | "signup", expectedMessage: string, timeout = 5000) {
+    async verifyErrorMessage(form: "login" | "signup", expectedMessage: string, options: VerificationOptions = {}) {
         const errorMessageLocator = form === "login" ? this.logInForm.errorMessage : this.signUpForm.errorMessage;
-        await BaseVerification.verifyText(errorMessageLocator, expectedMessage, timeout);
+        await BaseVerification.verifyText(errorMessageLocator, expectedMessage, options);
     }
 
     @step("Verify still on 'Login' or 'Signup' page")
-    async verifyStillOnPage(timeout = 5000) {
+    async verifyStillOnPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.LOGIN_URL}$|${this.SIGNUP_URL}$`);
-        await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, timeout);
-        await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, timeout);
-        await this.verifyFormHeader("login", timeout);
-        await this.verifyFormHeader("signup", timeout);    
+        await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
+        await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+        await this.verifyFormHeader("login", options);
+        await this.verifyFormHeader("signup", options);    
     }
 
     @step("Verify '{0}' field validation for log in form is displayed correctly")
-    async verifyLoginFormFieldIsInvalid(field: string) {
+    async verifyLoginFormFieldIsInvalid(field: string, options: VerificationOptions = {}) {
         const loginRequiredFieldMap = {
             email: this.logInForm.emailField,
             password: this.logInForm.passwordField,
@@ -88,11 +88,11 @@ export class LogInPage extends BasePage {
             throw new Error(`Invalid field name: ${field}. Valid options are: ${Object.keys(loginRequiredFieldMap).join(", ")}.`);
         }
         const fieldLocator = loginRequiredFieldMap[`${field}` as keyof typeof loginRequiredFieldMap];
-        await BaseVerification.verifyFieldIsInvalid(fieldLocator);
+        await BaseVerification.verifyFieldIsInvalid(fieldLocator, options);
     }
 
     @step("Verify '{0}' field validation for sign up form is displayed correctly")
-    async verifySignUpFormFieldIsInvalid(field: string) {
+    async verifySignUpFormFieldIsInvalid(field: string, options: VerificationOptions = {}) {
         const signupRequiredFieldMap = {
             name: this.signUpForm.nameField,
             email: this.signUpForm.emailField,
@@ -101,6 +101,6 @@ export class LogInPage extends BasePage {
             throw new Error(`Invalid field name: ${field}. Valid options are: ${Object.keys(signupRequiredFieldMap).join(", ")}.`);
         }
         const fieldLocator = signupRequiredFieldMap[`${field}` as keyof typeof signupRequiredFieldMap];
-        await BaseVerification.verifyFieldIsInvalid(fieldLocator);
+        await BaseVerification.verifyFieldIsInvalid(fieldLocator, options);
     }        
 }

@@ -1,6 +1,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "@core/ui/BasePage";
-import { BaseVerification } from "@core/ui/BaseVerification";
+import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { step } from "@utils/logger";
 import { UserInfo } from "@services/AuthService";
 
@@ -145,23 +145,23 @@ export class SignUpInformationPage extends BasePage {
 
     /* ** VERIFICATION METHODS ** */
     @step("Verify '{0}' form header is displayed correctly")
-    async verifyFormHeader(form: "account" | "address", timeout = 5000) {
+    async verifyFormHeader(form: "account" | "address", options: VerificationOptions = {}) {
         const headerLocator = form === "account" ? this.informationForm.headers.first() : this.informationForm.headers.nth(1);
         const headerText = form === "account" ? this.HEADER_TEXT.ACCOUNT_INFORMATION : this.HEADER_TEXT.ADDRESS_INFORMATION;
-        await BaseVerification.verifyText(headerLocator, headerText, timeout);
+        await BaseVerification.verifyText(headerLocator, headerText, options);
     }
 
     @step("Verify still on information form page")
-    async verifyStillOnPage(timeout = 5000) {
+    async verifyStillOnPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.URL}$`);
-        await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, timeout);
-        await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, timeout);
-        await this.verifyFormHeader("account", timeout);
-        await this.verifyFormHeader("address", timeout);
+        await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
+        await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+        await this.verifyFormHeader("account", options);
+        await this.verifyFormHeader("address", options);
     }
 
     @step("Verify '{0}' field validation is displayed")
-    async verifyFormFieldIsInvalid(fieldName: string, timeout = 5000) {
+    async verifyFormFieldIsInvalid(fieldName: string, options: VerificationOptions = {}) {
         const requiredFieldMap: Record<RequiredFields, Locator> = {
             name: this.informationForm.nameField,
             email: this.informationForm.emailField,
@@ -179,11 +179,11 @@ export class SignUpInformationPage extends BasePage {
             throw new Error(`Invalid field name: ${fieldName}. Valid options are: ${Object.keys(requiredFieldMap).join(", ")}.`);
         }
         const fieldLocator = requiredFieldMap[fieldName as RequiredFields];
-        await BaseVerification.verifyFieldIsInvalid(fieldLocator, timeout);
+        await BaseVerification.verifyFieldIsInvalid(fieldLocator, options);
     }
 
     @step("Verify '{0}' field is auto-filled with expected value '{1}'")
-    async verifyAutoFilledData(field: string, expectedValue: string, timeout = 5000) {
+    async verifyAutoFilledData(field: string, expectedValue: string, options: VerificationOptions = {}) {
         const autoFilledFieldMap: Record<AutoFilledFields, Locator> = {
             name: this.informationForm.nameField,
             email: this.informationForm.emailField,
@@ -192,23 +192,24 @@ export class SignUpInformationPage extends BasePage {
             throw new Error(`Invalid field name: ${field}. Valid options are: ${Object.keys(autoFilledFieldMap).join(", ")}.`);
         }
         const fieldLocator = autoFilledFieldMap[field as AutoFilledFields];
-        await BaseVerification.verifyFieldValue(fieldLocator, expectedValue, timeout);
+        await BaseVerification.verifyFieldValue(fieldLocator, expectedValue, options);
     }
 
     @step("Verify email field is disabled")
-    async verifyDisabledEmailField(timeout = 5000) {
+    async verifyDisabledEmailField(options: VerificationOptions = {}) {
+        const expectFn = BaseVerification.getExpect(options.soft);
         const errorMsg = "Expected email field to be disabled";
         await BaseVerification.expectWithLog(
-            async () => await expect(this.informationForm.emailField, errorMsg).toBeDisabled({ timeout }), 
+            async () => await expectFn(this.informationForm.emailField, errorMsg).toBeDisabled({ timeout: options.timeout }), 
             errorMsg
         );
     }
 
-    async verifyErrorMessage(fieldName: string, expectedMessage: string, timeout = 5000) {
+    async verifyErrorMessage(fieldName: string, expectedMessage: string, options: VerificationOptions = {}) {
         if (!(fieldName in this.errorMessages)) {
             throw new Error(`Invalid field name: ${fieldName}. Valid options are: ${Object.keys(this.errorMessages).join(", ")}.`);
         }
         const fieldLocator = this.errorMessages[fieldName as ErrorFields];
-        await BaseVerification.verifyText(fieldLocator, expectedMessage, timeout);
+        await BaseVerification.verifyText(fieldLocator, expectedMessage, options);
     }
 }

@@ -1,6 +1,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 
-type VerificationOptions = {
+export type VerificationOptions = {
     timeout?: number;
     soft?: boolean;
 };
