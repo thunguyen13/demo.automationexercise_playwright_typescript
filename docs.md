@@ -110,3 +110,4 @@
 ##  Note:
 1. in get/delete/verify api: case field = "" following behaviour of server -> not return Bad request response
 2. in register api: assumption case field = "" for required fields will return Bad request response
+3. Assumption: email must use a public domain (e.g., user@example.com).

@@ -1,5 +1,5 @@
 import { requiredFields } from "@pages/SignUpInformationPage";
-import { UserInfo } from '@services/AuthService';
+import { UserInfo } from "@services/AuthService";
 import { buildUserData, generateUniqueEmailAndName } from "@utils/dataHelpers";
 import { generateUniqueNumberString } from "@utils/helpers";
 
@@ -51,54 +51,119 @@ export const invalidRegisterData_misingFieldData: Array<Case> = [
     data: buildUserData(validAccInfo, { deleteFields: ["name"] }),
   },
   ...requiredFields
-  .filter(field => field !== "email" && field !== "name" && field !== "country")
-  .map(field => {
-    return {
-      name: `Missing required field: ${field}`,
-      screen: 2,
-      expectedFieldError: field,
-      errorMessage: "",
-      data: buildUserData(validAccInfo, { overrides: generateUniqueEmailAndName(), deleteFields: [field] }),
-    };
-  }),
+    .filter(
+      (field) => field !== "email" && field !== "name" && field !== "country"
+    )
+    .map((field) => {
+      return {
+        name: `Missing required field: ${field}`,
+        screen: 2,
+        expectedFieldError: field,
+        errorMessage: "",
+        data: buildUserData(validAccInfo, {
+          overrides: generateUniqueEmailAndName(),
+          deleteFields: [field],
+        }),
+      };
+    }),
 ];
 
 export const invalidRegisterData_invalidFormatField: Array<Case> = [
+  {
+    name: "Invalid email - missing @",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: buildUserData(validAccInfo, {
+      overrides: {
+        ...generateUniqueEmailAndName(),
+        email: "invalidEmail",
+      },
+    }),
+  },
+  {
+    name: "Invalid email - missing domain",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: buildUserData(validAccInfo, {
+      overrides: {
+        ...generateUniqueEmailAndName(),
+        email: "invalidEmail@",
+      },
+    }),
+  },
+  {
+    name: "Invalid email - missing top-level domain",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: buildUserData(validAccInfo, {
+      overrides: {
+        ...generateUniqueEmailAndName(),
+        email: "invalidEmail@demo",
+      },
+    }),
+  },
+  {
+    name: "Invalid email - invalid domain",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: buildUserData(validAccInfo, {
+      overrides: {
+        ...generateUniqueEmailAndName(),
+        email: "invalidEmail@.com",
+      },
+    }),
+  },
   {
     name: "Password less than 6 characters",
     screen: 2,
     expectedFieldError: "password",
     errorMessage: "Password must be at least 6 characters!",
-    data: buildUserData(validAccInfo, { overrides: { ...generateUniqueEmailAndName(), password: "123" } }),
+    data: buildUserData(validAccInfo, {
+      overrides: { ...generateUniqueEmailAndName(), password: "123" },
+    }),
   },
   {
     name: "Password more than 20 characters",
     screen: 2,
     expectedFieldError: "password",
     errorMessage: "Password must be at most 20 characters!",
-    data: buildUserData(validAccInfo, { overrides: { ...generateUniqueEmailAndName(), password: "1".repeat(21) } }),
+    data: buildUserData(validAccInfo, {
+      overrides: { ...generateUniqueEmailAndName(), password: "1".repeat(21) },
+    }),
   },
   {
     name: "Invalid mobile number format",
     screen: 2,
     expectedFieldError: "mobile_number",
     errorMessage: "Mobile number is not valid!",
-    data: buildUserData(validAccInfo, { overrides: { ...generateUniqueEmailAndName(), mobile_number: "invalidNumber" } }),
+    data: buildUserData(validAccInfo, {
+      overrides: {
+        ...generateUniqueEmailAndName(),
+        mobile_number: "invalidNumber",
+      },
+    }),
   },
   {
     name: "Invalid zip code format",
     screen: 2,
     expectedFieldError: "zipcode",
     errorMessage: "Zip code is not valid!",
-    data: buildUserData(validAccInfo, { overrides: { ...generateUniqueEmailAndName(), zipcode: "12345!" } }),
-  }
-]
+    data: buildUserData(validAccInfo, {
+      overrides: { ...generateUniqueEmailAndName(), zipcode: "12345!" },
+    }),
+  },
+];
 
 export const invalidRegisterData_duplicateEmail: Case = {
   name: "Email already exist",
   screen: 1,
   expectedFieldError: "",
   errorMessage: "Email Address already exist!",
-  data: buildUserData(validAccInfo, { overrides: generateUniqueEmailAndName() }),
-}
-
+  data: buildUserData(validAccInfo, {
+    overrides: generateUniqueEmailAndName(),
+  }),
+};

@@ -78,3 +78,14 @@ export function generateUniqueNumberString(min: number, max: number, useTimestam
     return randomStringNumber;
 }
 
+export function getRequiredField(obj: object, fieldPath: string) {
+    const value = getValueFieldByPath(obj, fieldPath);
+
+    if (value === undefined || value === null)
+        throw new Error(`[DATA] Required field "${fieldPath}" is missing.`);
+
+    if (typeof value === "string" && value.trim() === "")
+        throw new Error(`[DATA] Required field "${fieldPath}" cannot be empty.`);
+
+    return value
+}
