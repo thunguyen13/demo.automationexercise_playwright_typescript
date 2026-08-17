@@ -1,10 +1,11 @@
 import { LogInPage } from "@pages/LogInSignUpPage";
 import { SignUpInformationPage } from "@pages/SignUpInformationPage";
 import { test } from "@fixtures/ui/auth";
-import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_misingFieldData, validAccInfo } from "@data/ui/accountData";
+import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_misingFieldData, validAccInfo } from "@data/ui/account";
 import { AccountCreatedPage } from "@pages/AccountCreatedPage";
 import { BaseValidator } from "@core/api/BaseValidator";
 import { getRequiredField } from "@utils/helpers";
+import { HomePage } from "@pages/HomePage";
 
 const validEmail = getRequiredField(validAccInfo, "email");
 const validPassword = getRequiredField(validAccInfo, "password");
@@ -15,6 +16,7 @@ test.describe("Registration flow with valid data", () => {
         const logInSignUpPage = new LogInPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
         const accountCreatedPage = new AccountCreatedPage(page);
+        const homePage = new HomePage(page);
 
         await logInSignUpPage.navigateTo("signup");
         await logInSignUpPage.signup(validName, validEmail);
@@ -22,6 +24,8 @@ test.describe("Registration flow with valid data", () => {
         await signUpInformationPage.submitInformationForm();
         await trackUserForCleanup({ email: validEmail, password: validPassword });
         await accountCreatedPage.verifyPageContent();
+        await accountCreatedPage.clickContinue();
+        await homePage.header.verifyLoggedInAsText(`Logged in as ${validName}`);
     });
 });
 
@@ -104,7 +108,7 @@ test.describe("Registration flow with existing email", () => {
     })
 });
 
-test.describe.only("Registration flow with invalid form data", () => {
+test.describe("Registration flow with invalid form data", () => {
     for (const testCase of invalidRegisterData_invalidFormatField) {
         test(`Should display validation when "${testCase.name}"`, async ({ page, trackUserForCleanup }) => {
             const screen = getRequiredField(testCase, "screen");

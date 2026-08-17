@@ -82,4 +82,10 @@ export class BaseVerification {
         const errorMsg = `Expected field "${fieldLocator.toString()}" to have value "${expectedValue}"`;
         await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toHaveValue(expectedValue, { timeout: options.timeout }), errorMsg);
     }
+
+    static async verifyElementIsVisible(fieldLocator: Locator, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
+        const errorMsg = `Expected field "${fieldLocator.toString()}" to be visible`;
+        await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toBeVisible({ timeout: options.timeout }), errorMsg);
+    }
 }

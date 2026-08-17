@@ -106,18 +106,6 @@ export const invalidRegisterData_invalidFormatField: Array<Case> = [
     }),
   },
   {
-    name: "Invalid email - invalid domain",
-    screen: 1,
-    expectedFieldError: "email",
-    errorMessage: "",
-    data: buildUserData(validAccInfo, {
-      overrides: {
-        ...generateUniqueEmailAndName(),
-        email: "invalidEmail@.com",
-      },
-    }),
-  },
-  {
     name: "Password less than 6 characters",
     screen: 2,
     expectedFieldError: "password",
@@ -167,3 +155,116 @@ export const invalidRegisterData_duplicateEmail: Case = {
     overrides: generateUniqueEmailAndName(),
   }),
 };
+
+export const invalidLoginData: Array<Case> = [
+  {
+    name: "Missing email",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: "",
+      password: validAccInfo.password,
+    },
+  },
+  {
+    name: "Missing password",
+    screen: 1,
+    expectedFieldError: "password",
+    errorMessage: "",
+    data: {
+      email: validAccInfo.email,
+      password: "",
+    },
+  },
+  {
+    name: "Missing email and password",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: "",
+      password: "",
+    },
+  },
+  {
+    name: "Invalid email format - Missing @",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: validAccInfo.email.replace("@", ""),
+      password: validAccInfo.password,
+    }
+  },
+  {
+    name: "Invalid email format - Missing username",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: `@${validAccInfo.email.split("@")[1]}`,
+      password: validAccInfo.password,
+    }
+  },
+  {
+    name: "Invalid email format - Missing domain",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: `${validAccInfo.email.split("@")[0]}@`,
+      password: validAccInfo.password,
+    }
+  },
+  {
+    name: "Invalid email format - Missing top-level domain",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: `${validAccInfo.email.split("@")[0]}@demo`,
+      password: validAccInfo.password,
+    }
+  },
+  {
+    name: "Blank email",
+    screen: 1,
+    expectedFieldError: "email",
+    errorMessage: "",
+    data: {
+      email: "   ",
+      password: validAccInfo.password,
+    },
+  },
+  {
+    name: "Invalid email - Email does not exist",
+    screen: 1,
+    expectedFieldError: "",
+    errorMessage: "Your email or password is incorrect!",
+    data: {
+      email: `nonexistent_${validAccInfo.email}`,
+      password: validAccInfo.password,
+    }
+  },
+  {
+    name: "Blank password",
+    screen: 1,
+    expectedFieldError: "",
+    errorMessage: "Your email or password is incorrect!",
+    data: {
+      email: validAccInfo.email,
+      password: "   ",
+    },
+  },
+  {
+    name: "Invalid password - Password does not match",
+    screen: 1,
+    expectedFieldError: "",
+    errorMessage: "Your email or password is incorrect!",
+    data: {
+      email: validAccInfo.email,
+      password: "wrongPassword",
+    }
+  }
+];

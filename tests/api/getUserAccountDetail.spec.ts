@@ -1,7 +1,7 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { test } from "@fixtures/api/account";
 import { UserIdentity, UserInfo } from "@services/AuthService";
-import { validAccInfo, failureGetUserDetailData } from "@data/api/accountData";
+import { validAccInfo, failureGetUserDetailData } from "@data/api/account";
 import { userDetailSchema } from "src/models/account.schema";
 
 const endpoint = "/getUserDetailByEmail";
