@@ -32,7 +32,7 @@ test.describe('Register Success', () => {
 
 test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
     for (const data of missingFieldRegisterData) {
-        test.only(`Should fail to register with: ${data.case}`, async ({ authService, trackUserForCleanup }) => {
+        test(`Should fail to register with: ${data.case}`, async ({ authService, trackUserForCleanup }) => {
             const errorMsg = data.message || "Bad request, missing required fields in POST request.";
             console.log(`Testing registration API with payload data: ${JSON.stringify(data.payloadData)}`);
             const response = await authService.createAccount(data.payloadData);

@@ -1,5 +1,5 @@
 import { BaseValidator } from "@core/api/BaseValidator";
-import { expect, test } from "@fixtures/api/product";
+import { test } from "@fixtures/api/product";
 import { getDataFromJsonFile } from "@utils/fileHandling";
 import {
   allProductsListSchema,
@@ -9,7 +9,7 @@ import {
 const successCode = 200;
 
 test.describe("Product List API", () => {
-  test.only("Should retrieve all products", async ({ productService }) => {
+  test("Should retrieve all products", async ({ productService }) => {
     const response = await productService.getAllProducts();
     BaseValidator.validateStatusCode(response, successCode);
     BaseValidator.validateSchema(response, allProductsListSchema);
