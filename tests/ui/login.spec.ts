@@ -2,7 +2,7 @@ import { LogInPage } from "@pages/LogInSignUpPage";
 import { test } from "@fixtures/ui/auth";
 import { invalidLoginData, validAccInfo } from "@data/ui/account";
 import { BaseValidator } from "@core/api/BaseValidator";
-import { getRequiredField, getValueFieldByPath } from "@utils/helpers";
+import { getRequiredField } from "@utils/helpers";
 import { HomePage } from "@pages/HomePage";
 
 const validEmail = getRequiredField(validAccInfo, "email");
@@ -17,7 +17,7 @@ test.beforeAll(async ({ authService }) => {
 });
 
 test.describe("Success Login with valid credentials", () => {
-    test("Should login successfully", async ({ page, trackUserForCleanup }) => {
+    test("Should login successfully", async ({ page }) => {
         const logInSignUpPage = new LogInPage(page);
         const homePage = new HomePage(page);
 
