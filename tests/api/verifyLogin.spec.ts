@@ -1,7 +1,7 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { test } from "@fixtures/api/account";
 import { UserIdentity, UserInfo } from "@services/AuthService";
-import { validAccInfo, badRequestData, notFoundData } from "@data/api/accountData";
+import { validAccInfo, badRequestData, notFoundData } from "@data/api/account";
 
 const endpoint = "/verifyLogin";
 const testUser: UserInfo = validAccInfo;

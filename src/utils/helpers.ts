@@ -38,7 +38,7 @@ export function cleanUndefinedValues(obj: Record<any, any>) {
 export function getValueFieldByPath(obj: Record<string, any>, path: string) {
     const cleanPath = path.replace(/\[(.*?)\]/g, '.$1').replace(/^\./, '').replace(/["']/g, '');
     const keys = cleanPath.split('.');
-    const value = keys.reduce((acc: any, key: string) => acc?.[key], obj as any);
+    const value = keys.reduce((cal: any, key: string) => cal?.[key], obj as any);
     return value;
 }
 
@@ -78,3 +78,14 @@ export function generateUniqueNumberString(min: number, max: number, useTimestam
     return randomStringNumber;
 }
 
+export function getRequiredField(obj: object, fieldPath: string) {
+    const value = getValueFieldByPath(obj, fieldPath);
+
+    if (value === undefined || value === null)
+        throw new Error(`[DATA] Required field "${fieldPath}" is missing.`);
+
+    if (typeof value === "string" && value.trim() === "")
+        throw new Error(`[DATA] Required field "${fieldPath}" cannot be empty.`);
+
+    return value;
+}

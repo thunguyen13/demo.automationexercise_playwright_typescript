@@ -1,7 +1,7 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { CleanUpUser, test } from "@fixtures/api/account";
 import { getValueFieldByPath } from "@utils/helpers";
-import { duplicateEmailRegisterData, invalidRegisterData, missingFieldRegisterData, validRegisterData } from "@data/api/accountData";
+import { duplicateEmailRegisterData, invalidRegisterData, missingFieldRegisterData, validRegisterData } from "@data/api/account";
 import { ApiResponse } from "@core/api/ApiClient";
 
 
@@ -73,7 +73,7 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
 
 test.describe('Register Failure - Bad Request: Duplicate Email', () => {
     const payloadData = duplicateEmailRegisterData.payloadData;
-    test.beforeEach(async ({ authService, trackUserForCleanup }) => {
+    test.beforeEach(async ({ authService }) => {
         console.log(`[Before each hook] Creating test user.`);
         const response = await authService.createAccount(payloadData);
         BaseValidator.validateFieldValue(response, "responseCode", successCreatedCode);
