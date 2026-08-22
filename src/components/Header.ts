@@ -32,7 +32,7 @@ export class Header {
      * Click on a menu item
      * @param item - The menu item to click on. Must be a key of the `menuItems` object.
      */
-    @step("Clicking on the menu item: {item}")
+    @step("Clicking on the menu item: '{0}'")
     async clickMenuItem(item: keyof typeof this.menuItems) {
         await this.menuItems[item].click();
     }
@@ -42,9 +42,14 @@ export class Header {
      * @param item - The menu item to verify. Must be a key of the `menuItems` object.
      * @param options - Optional parameters for verification
      */
-    @step("Verifying that the menu item: {item} is visible")
+    @step("Verifying that the menu item: '{0}' is visible")
     async verifyItemIsVisible(item: keyof typeof this.menuItems, options: VerificationOptions = {}) {
         await BaseVerification.verifyElementIsVisible(this.menuItems[item], options);
+    }
+
+    @step("Verifying that the menu item: '{0}' is hidden")
+    async verifyItemIsHidden(item: keyof typeof this.menuItems, options: VerificationOptions = {}) {
+        await BaseVerification.verifyElementIsHidden(this.menuItems[item], options);
     }
 
     /**
@@ -52,7 +57,7 @@ export class Header {
      * @param expectedText - The expected text to verify in the "Logged in as" menu item.
      * @param options - Optional parameters for verification
      */
-    @step("Verifying that the menu item: {item} is not visible")
+    @step("Verifying that the menu item: '{0}' is not visible")
     async verifyLoggedInAsText(expectedText: string, options: VerificationOptions = {}) {
         await BaseVerification.verifyText(this.menuItems.loggedInAs, expectedText, options);
     }

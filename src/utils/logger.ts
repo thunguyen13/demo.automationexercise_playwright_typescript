@@ -6,10 +6,12 @@ export function step(this: any, stepName?: string) {
     return function decorator(this: any, target: Function, context: ClassMemberDecoratorContext) {
         // the replacement function that will be called instead of the original method
         return async function replacement(this: any, ...args: any[]) {
-            const name = stepName ? formattedStepName(stepName, args) : `${this.constructor.name}.${String(context.name)}`;
+            const className = this.constructor.name;
+            const methodName = String(context.name);
+            const name = stepName ? formattedStepName(stepName, args) : `[${className}.${methodName}]`;
             // execute the original method within a test.step block to log it as a step in the test report
             return await test.step(name, async () => {
-                console.log(`[PERFORMING STEP] ${name}`);
+                console.log(`[${className}] Step: ${name}`);
                 return await target.call(this, ...args);
             });
         };

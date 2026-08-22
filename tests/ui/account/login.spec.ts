@@ -10,10 +10,10 @@ const validPassword = getRequiredField(validAccInfo, "password");
 const validName = getRequiredField(validAccInfo, "name");
 
 test.beforeAll(async ({ authService }) => {
-    console.log(`[Before all hook] Creating test user: ${validEmail}`);
+    console.log(`[BEFORE ALL HOOK] Creating test user: ${validEmail}`);
     const response = await authService.createAccount(validAccInfo);
     BaseValidator.validateFieldValue(response, "responseCode", 201);
-    console.log(`[Setup] Created test user with email: ${validEmail} for registration tests.`);
+    console.log(`[SETUP] Created test user with email: ${validEmail} for registration tests.`);
 });
 
 test.describe("Success Login with valid credentials", () => {
@@ -41,10 +41,10 @@ test.describe("Login unsuccessfully with invalid credentials", () => {
             await logInSignUpPage.login(data.email, data.password);
             if (expectedFieldError) {
                 await logInSignUpPage.verifyLoginFormFieldIsInvalid(expectedFieldError);
-                await logInSignUpPage.verifyStillOnPage();
+                await logInSignUpPage.verifyCurrentPage();
             } else if (errorMessage) {
                 await logInSignUpPage.verifyErrorMessage("login", errorMessage);
-                await logInSignUpPage.verifyStillOnPage();
+                await logInSignUpPage.verifyCurrentPage();
             } else {
                 throw new Error(`Test case "${testCase.name}" does not have expectedFieldError or errorMessage defined.`);
             }
@@ -53,13 +53,13 @@ test.describe("Login unsuccessfully with invalid credentials", () => {
 });
 
 test.afterAll(async ({ authService }) => {
-    console.log(`[After all hook] Attempting to delete test user: ${validEmail}`);
+    console.log(`[AFTER ALL HOOK] Attempting to delete test user: ${validEmail}`);
     const payload = {
         email: validEmail,
         password: validPassword,
     };
     const res = await authService.deleteAccount(payload);
     console.log(
-        `[Clean up] Attempted to delete test user with email: ${validEmail}. Response code in body: ${res.body.responseCode}.`
+        `[CLEAN UP] Attempted to delete test user with email: ${validEmail}. Response code in body: ${res.body.responseCode}.`
     );
 });

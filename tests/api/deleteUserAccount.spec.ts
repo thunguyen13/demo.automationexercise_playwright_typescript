@@ -18,19 +18,19 @@ const unsupportedMethodMsg = `Method \"{method}\" not allowed.`;
 test.describe.configure({ mode: "parallel" });
 
 test.beforeEach(async ({ authService }, testInfo) => {
-  console.log(`[Before each hook] Creating test user. Worker index: ${testInfo.workerIndex}`);
+  console.log(`[BEFORE EACH HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
   await authService.createAccount(testUser);
-  console.log(`[Created] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
+  console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
 });
 
 test.afterEach(async ({ authService }) => {
-  console.log(`[After each hook] Deleting test user.`);
+  console.log(`[AFTER EACH HOOK] Deleting test user.`);
   const userIdentity: UserIdentity = {
     email: testUser.email,
     password: testUser.password,
   };
   const res= await authService.deleteAccount(userIdentity);
-  console.log(`[Clean up] Aptempted to delete test user with email: ${testUser.email} and responseCode is: ${res.body.responseCode}`);
+  console.log(`[CLEAN UP] Aptempted to delete test user with email: ${testUser.email} and responseCode is: ${res.body.responseCode}`);
 });
 
 test.describe("Success Delete API", () => {
