@@ -35,7 +35,7 @@ export const test = base.extend<Fixtures>({
       user = u;
     });
 
-    console.log(`[Fixture - After each hook] Attempting to delete test user.`);
+    console.log(`[FIXTURE - AFTER EACH HOOK] Attempting to delete test user.`);
     if (user.email != null && user.password != null) {
       const payload = {
         email: user.email,
@@ -43,11 +43,11 @@ export const test = base.extend<Fixtures>({
       };
       const res = await authService.deleteAccount(payload);
       console.log(
-        `[Clean up] Aptempted to delete test user with email: ${user.email}. Response code in body: ${res.body.responseCode}.`
+        `[CLEAN UP] Aptempted to delete test user with email: ${user.email}. Response code in body: ${res.body.responseCode}.`
       );
     } else {
         console.log(
-          "[Clean up] No user information provided for cleanup. Skipping deletion."
+          "[CLEAN UP] No user information provided for cleanup. Skipping deletion."
         );
     }
   }

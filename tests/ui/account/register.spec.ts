@@ -66,13 +66,13 @@ test.describe("Registration flow with empty required fields", () => {
             await logInSignUpPage.signup(name, email);
             if (screen === 1) {
                 await logInSignUpPage.verifySignUpFormFieldIsInvalid(expectedFieldError);
-                await logInSignUpPage.verifyStillOnPage();
+                await logInSignUpPage.verifyCurrentPage();
             } else if (screen === 2) {
                 await signUpInformationPage.fillInformationForm(signupData);
                 await signUpInformationPage.submitInformationForm();
                 await trackUserForCleanup({email: email, password: password});
                 await signUpInformationPage.verifyFormFieldIsInvalid(expectedFieldError);
-                await signUpInformationPage.verifyStillOnPage();
+                await signUpInformationPage.verifyCurrentPage();
                 await trackUserForCleanup({email: null, password: null});
             }
         });
@@ -85,7 +85,7 @@ test.describe("Registration flow with existing email", () => {
     const password = getRequiredField(accInfo, "password");
     const name = getRequiredField(accInfo, "name");
     test.beforeEach(async ({ authService, trackUserForCleanup }) => {
-        console.log(`[Before each hook] Creating test user: ${email}`);
+        console.log(`[BEFORE EACH HOOK] Creating test user: ${email}`);
         const response = await authService.createAccount(accInfo);
         BaseValidator.validateFieldValue(response, "responseCode", 201);
         // Register for cleanup
@@ -93,7 +93,7 @@ test.describe("Registration flow with existing email", () => {
             email: email,
             password: password,
         });
-        console.log(`[Setup] Created test user with email: ${email} for duplicate email registration test.`);
+        console.log(`[SETUP] Created test user with email: ${email} for duplicate email registration test.`);
     })
     test("Should display error message when email is existing", async ({ page }) => {
         const errorMessage = getRequiredField(invalidRegisterData_duplicateEmail, "errorMessage");
@@ -104,7 +104,7 @@ test.describe("Registration flow with existing email", () => {
         await logInSignUpPage.navigateTo("signup");
         await logInSignUpPage.signup(name, email);
         await logInSignUpPage.verifyErrorMessage("signup", errorMessage);
-        await logInSignUpPage.verifyStillOnPage();
+        await logInSignUpPage.verifyCurrentPage();
     })
 });
 
@@ -130,13 +130,13 @@ test.describe("Registration flow with invalid form data", () => {
                 } else {
                     await logInSignUpPage.verifySignUpFormFieldIsInvalid(expectedFieldError);
                 }
-                await logInSignUpPage.verifyStillOnPage();
+                await logInSignUpPage.verifyCurrentPage();
             } else if (screen === 2) {
                 await signUpInformationPage.fillInformationForm(signupData);
                 await signUpInformationPage.submitInformationForm();
                 await trackUserForCleanup({email: email, password: password});
                 await signUpInformationPage.verifyErrorMessage(expectedFieldError, errorMessage);
-                await signUpInformationPage.verifyStillOnPage();
+                await signUpInformationPage.verifyCurrentPage();
                 await trackUserForCleanup({email: null, password: null});
             }
         })

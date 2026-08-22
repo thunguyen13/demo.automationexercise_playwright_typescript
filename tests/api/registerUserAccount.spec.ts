@@ -74,10 +74,10 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
 test.describe('Register Failure - Bad Request: Duplicate Email', () => {
     const payloadData = duplicateEmailRegisterData.payloadData;
     test.beforeEach(async ({ authService }) => {
-        console.log(`[Before each hook] Creating test user.`);
+        console.log(`[BEFORE EACH HOOK] Creating test user.`);
         const response = await authService.createAccount(payloadData);
         BaseValidator.validateFieldValue(response, "responseCode", successCreatedCode);
-        console.log(`[Setup] Created test user with email: ${payloadData.email} for duplicate email registration test.`);
+        console.log(`[SETUP] Created test user with email: ${payloadData.email} for duplicate email registration test.`);
     });
     test(`Should fail to register with: ${duplicateEmailRegisterData.case}`, async ({ authService, trackUserForCleanup }) => {
         const errorMsg = duplicateEmailRegisterData.message || "Bad request, email already exists.";
@@ -142,14 +142,14 @@ test.describe('Register Unsupported HTTP Method', () => {
 
 async function trackUserForCleanUpIfCreated(response: ApiResponse, account: { email: string, password: string }, trackUserForCleanup: (u: CleanUpUser) => Promise<void>) {
     if (response.body == null) {
-        throw new Error("[Unexpected Response] Response body is null. Cannot determine if account was created. Email: " + account.email);
+        throw new Error("[UNEXPECTED] Response body is null. Cannot determine if account was created. Email: " + account.email);
     }
     const responseCode = getValueFieldByPath(response.body, "responseCode");
     if (responseCode !== successCreatedCode) {
-        console.log(`[No Unexpected Success] Registration failed as expected. No account to clean up for email: ${account.email}.`);
+        console.log(`[EXPECTED] Registration failed as expected. No account to clean up for email: ${account.email}.`);
         return;
     }
-    console.log(`[Unexpected Success] Registration succeeded. Add account to the cleanup queue by email: ${account.email}.`);
+    console.log(`[UNEXPECTED] Registration succeeded. Add account to the cleanup queue by email: ${account.email}.`);
     await trackUserForCleanup({
         email: account.email,
         password: account.password,

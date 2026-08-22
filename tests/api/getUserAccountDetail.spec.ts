@@ -15,9 +15,9 @@ const unsupportedMethodMsg = "This request method is not supported.";
 test.describe.configure({ "mode": "parallel" });
 
 test.beforeAll(async ({ authService }, testInfo) => {
-    console.log(`[Before all hook] Creating test user. Worker index: ${testInfo.workerIndex}`);
+    console.log(`[BEFORE ALL HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
     await authService.createAccount(testUser);
-    console.log(`[Created] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
+    console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
 });
 
 test.describe("Success Get User Detail By Email API", () => {
@@ -79,11 +79,11 @@ test.describe("Verify API Get User Detail retrieves error message for unsupporte
 });
 
 test.afterAll(async ({ authService }) => {
-    console.log(`[After all hook] Deleting test user.`);
+    console.log(`[AFTER ALL HOOK] Deleting test user.`);
     const userIdentity: UserIdentity = {
         email: testUser.email,
         password: testUser.password
     }
     const res = await authService.deleteAccount(userIdentity);
-    console.log(`[Clean up] Test user with email: ${testUser.email} has been deleted. Response code: ${res.body.responseCode}`);
+    console.log(`[CLEAN UP] Test user with email: ${testUser.email} has been deleted. Response code: ${res.body.responseCode}`);
 });
