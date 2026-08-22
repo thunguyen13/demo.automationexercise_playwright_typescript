@@ -69,8 +69,8 @@ export class LogInPage extends BasePage {
         await BaseVerification.verifyText(errorMessageLocator, expectedMessage, options);
     }
 
-    @step("Verify still on 'Login' or 'Signup' page")
-    async verifyStillOnPage(options: VerificationOptions = {}) {
+    @step("Verify current page is 'Login' or 'Signup' page")
+    async verifyCurrentPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.LOGIN_URL}$|${this.SIGNUP_URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
         await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);

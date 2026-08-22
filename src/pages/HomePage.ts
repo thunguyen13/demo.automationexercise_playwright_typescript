@@ -18,4 +18,5 @@ export class HomePage extends BasePage {
      async navigateTo() {
         await this.page.goto("/");
     }
+
 }

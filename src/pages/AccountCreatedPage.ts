@@ -18,6 +18,8 @@ export class AccountCreatedPage extends BasePage {
     private readonly continueButton = this.container.getByTestId("continue-button");
 
     /* ** CONSTANTS ** */
+    public readonly PAGE_URL = "/account-created";
+    public readonly PAGE_TITLE = "Automation Exercise - Account Created";
     public readonly HEADER = "Account Created!";
     public readonly MESSAGES = [
         "Congratulations! Your new account has been successfully created!",
@@ -33,9 +35,15 @@ export class AccountCreatedPage extends BasePage {
     /*** VERIFICATION METHODS ***/
     @step("Verifying the content of the Account Created page with expected header and messages")
     async verifyPageContent(options: VerificationOptions = {}) {
-        await BaseVerification.verifyText(this.textLocators.header, this.HEADER, options);
         for (let i = 0; i < this.MESSAGES.length; i++) {
             await BaseVerification.verifyText(this.textLocators.messages.nth(i), this.MESSAGES[i], options);
         }
+    }
+
+    async verifyCurrentPage(options: VerificationOptions = {}) {
+        const expectedUrlRegex = new RegExp(`${this.PAGE_URL}$`);
+        await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
+        await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+        await BaseVerification.verifyText(this.textLocators.header, this.HEADER, options);
     }
 }

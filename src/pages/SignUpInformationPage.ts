@@ -151,8 +151,8 @@ export class SignUpInformationPage extends BasePage {
         await BaseVerification.verifyText(headerLocator, headerText, options);
     }
 
-    @step("Verify still on information form page")
-    async verifyStillOnPage(options: VerificationOptions = {}) {
+    @step("Verify current page is information form page")
+    async verifyCurrentPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
         await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
