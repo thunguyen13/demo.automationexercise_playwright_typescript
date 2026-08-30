@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from "@playwright/test";
+import {  Locator, Page } from "@playwright/test";
 import { BasePage } from "@core/ui/BasePage";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { step } from "@utils/logger";
@@ -205,6 +205,7 @@ export class SignUpInformationPage extends BasePage {
         );
     }
 
+    @step("Verify error message for '{0}' field is displayed correctly")
     async verifyErrorMessage(fieldName: string, expectedMessage: string, options: VerificationOptions = {}) {
         if (!(fieldName in this.errorMessages)) {
             throw new Error(`Invalid field name: ${fieldName}. Valid options are: ${Object.keys(this.errorMessages).join(", ")}.`);

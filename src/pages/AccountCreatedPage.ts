@@ -40,6 +40,7 @@ export class AccountCreatedPage extends BasePage {
         }
     }
 
+    @step("Verifying the current page is the Account Created page with expected URL, title, and header")
     async verifyCurrentPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.PAGE_URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
