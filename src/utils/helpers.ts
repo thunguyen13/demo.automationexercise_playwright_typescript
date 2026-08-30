@@ -78,6 +78,12 @@ export function generateUniqueNumberString(min: number, max: number, useTimestam
     return randomStringNumber;
 }
 
+/**
+ * Get the value of a required field from an object based on a specified path. If the field is missing or empty, an error will be thrown.
+ * @param obj - The object from which to retrieve the required field.
+ * @param fieldPath - The path to the required field in the object, using dot notation for nested properties and square brackets for array indices (e.g., "user.address[0].street").
+ * @returns - The value of the required field if it exists and is not empty.
+ */
 export function getRequiredField(obj: object, fieldPath: string) {
     const value = getValueFieldByPath(obj, fieldPath);
 
@@ -88,4 +94,39 @@ export function getRequiredField(obj: object, fieldPath: string) {
         throw new Error(`[DATA] Required field "${fieldPath}" cannot be empty.`);
 
     return value;
+}
+
+/**
+ * Get a list of unique random indexes from an array of a specified length.
+ * @param arrayLength - The length of the array from which to select random indexes.
+ * @param count - The number of unique random indexes to select from the array.
+ * @returns - An array of unique random indexes selected from the range of 0 to arrayLength - 1.
+ */
+export function getRandomIndexList(arrayLength: number, count: number): number[] {
+    if (arrayLength <= 0 || count <= 0) 
+        throw new Error("Array length and count must be greater than 0.");
+    if (count > arrayLength)
+        throw new Error("Count cannot be greater than array length.");
+
+    const indexes = Array.from({ length: arrayLength }, (_, i) => i);
+
+    for (let i = indexes.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+    }
+
+    return indexes.slice(0, count);
+}
+
+/**
+ * Get a random integer between the specified minimum and maximum values (inclusive).
+ * @param min - The minimum value (inclusive) for the random integer generation.
+ * @param max - The maximum value (inclusive) for the random integer generation.
+ * @returns - A random integer between the specified min and max values (inclusive).
+ */
+export function getRandomInt(min: number, max: number): number {
+    if (min > max) {
+        throw new Error("Minimum value cannot be greater than maximum value.");
+    }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

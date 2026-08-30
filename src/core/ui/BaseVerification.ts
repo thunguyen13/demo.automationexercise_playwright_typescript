@@ -94,4 +94,12 @@ export class BaseVerification {
         const errorMsg = `Expected field "${fieldLocator.toString()}" to be hidden`;
         await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toBeHidden({ timeout: options.timeout }), errorMsg);
     }
+
+    static async verifyAttribute(locator: Locator, attributeName: string, expectedValue: string | RegExp, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
+        const errorVisibleMsg = `Expected locator "${locator.toString()}" to be visible`;
+        await this.expectWithLog(() => expectFn(locator, errorVisibleMsg).toBeVisible({ timeout: options.timeout }), errorVisibleMsg);
+        const errorAttributeMsg = `Expected locator "${locator.toString()}" to have attribute "${attributeName}" with value "${expectedValue}"`;
+        await this.expectWithLog(() => expectFn(locator, errorAttributeMsg).toHaveAttribute(attributeName, expectedValue, { timeout: options.timeout }), errorAttributeMsg);
+    }
 }
