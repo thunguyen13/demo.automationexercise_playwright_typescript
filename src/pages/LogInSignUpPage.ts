@@ -34,21 +34,21 @@ export class LogInPage extends BasePage {
     public readonly SIGNUP_FORM_HEADER_TEXT = "New User Signup!";
 
     /* ** ACTION METHODS ** */
-    @step("Navigate to '{0}' page")
+    @step("Navigating to '{0}' page")
     async navigateTo(pageType: "login" | "signup" = "login") {
         if (pageType === "login")
             await this.page.goto(this.LOGIN_URL);
         else await this.page.goto(this.SIGNUP_URL);
     }
 
-    @step("Log in with email: '{0}' and password: '{1}'")
+    @step("Logging in with email: '{0}' and password: '{1}'")
     async login(email: string, password: string) {
         await this.logInForm.emailField.fill(email);
         await this.logInForm.passwordField.fill(password);
         await this.logInForm.submitButton.click();
     }
 
-    @step("Sign up with name: '{0}' and email: '{1}'")
+    @step("Signing up with name: '{0}' and email: '{1}'")
     async signup(name: string, email: string) {
         await this.signUpForm.nameField.fill(name);
         await this.signUpForm.emailField.fill(email);
@@ -56,20 +56,20 @@ export class LogInPage extends BasePage {
     }
 
     /*** VERIFICATION METHODS ***/
-    @step("Verify '{0}' form header is displayed correctly")
+    @step("Verifying '{0}' form header is displayed correctly")
     async verifyFormHeader(form: "login" | "signup", options: VerificationOptions = {}) {
         const headerLocator = form === "login" ? this.logInForm.header : this.signUpForm.header;
         const headerText = form === "login" ? this.LOGIN_FORM_HEADER_TEXT : this.SIGNUP_FORM_HEADER_TEXT;
         await BaseVerification.verifyText(headerLocator, headerText, options);
     }
 
-    @step("Verify error message for '{0}' form is displayed correctly")
+    @step("Verifying error message for '{0}' form is displayed correctly")
     async verifyErrorMessage(form: "login" | "signup", expectedMessage: string, options: VerificationOptions = {}) {
         const errorMessageLocator = form === "login" ? this.logInForm.errorMessage : this.signUpForm.errorMessage;
         await BaseVerification.verifyText(errorMessageLocator, expectedMessage, options);
     }
 
-    @step("Verify current page is 'Login' or 'Signup' page")
+    @step("Verifying current page is 'Login' or 'Signup' page")
     async verifyCurrentPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.LOGIN_URL}$|${this.SIGNUP_URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
@@ -78,7 +78,7 @@ export class LogInPage extends BasePage {
         await this.verifyFormHeader("signup", options);    
     }
 
-    @step("Verify '{0}' field validation for log in form is displayed correctly")
+    @step("Verifying '{0}' field validation for log in form is displayed correctly")
     async verifyLoginFormFieldIsInvalid(field: string, options: VerificationOptions = {}) {
         const loginRequiredFieldMap = {
             email: this.logInForm.emailField,
@@ -91,7 +91,7 @@ export class LogInPage extends BasePage {
         await BaseVerification.verifyFieldIsInvalid(fieldLocator, options);
     }
 
-    @step("Verify '{0}' field validation for sign up form is displayed correctly")
+    @step("Verifying '{0}' field validation for sign up form is displayed correctly")
     async verifySignUpFormFieldIsInvalid(field: string, options: VerificationOptions = {}) {
         const signupRequiredFieldMap = {
             name: this.signUpForm.nameField,
