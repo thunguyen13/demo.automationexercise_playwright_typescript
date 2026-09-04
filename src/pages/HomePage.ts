@@ -14,7 +14,7 @@ export class HomePage extends BasePage {
     public readonly PAGE_TITLE = "Automation Exercise";
 
     /* ** ACTION METHODS ** */
-    @step("Navigate to Home Page")
+    @step("Navigating to Home Page")
      async navigateTo() {
         await this.page.goto("/");
     }

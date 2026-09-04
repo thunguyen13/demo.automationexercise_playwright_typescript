@@ -5,10 +5,10 @@ import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
 export type ProductDetails = {
-    category: string;
-    availability: string;
-    condition: string;
-    brand: string;
+    category?: string;
+    availability?: string;
+    condition?: string;
+    brand?: string;
 }
 
 export class ProductDetailsPage extends BasePage {
@@ -27,9 +27,9 @@ export class ProductDetailsPage extends BasePage {
         price: this.productDetailsContainer.locator('div[class="product-information"] > span > span'),
         quantityInput: this.productDetailsContainer.locator('div[class="product-information"] input[id="quantity"]'),
         addToCartButton: this.productDetailsContainer.getByRole('button', { name: 'Add to cart' }),
-        availavity: this.productDetailsContainer.getByText(/availability/i),
-        condition: this.productDetailsContainer.getByText(/condition/i),
-        brand: this.productDetailsContainer.getByText(/brand/i),
+        availability: this.productDetailsContainer.locator('p', { hasText: /availability/i }),
+        condition: this.productDetailsContainer.locator('p', { hasText: /condition/i }),
+        brand: this.productDetailsContainer.locator('p', { hasText: /brand/i }),
     }
     
 
@@ -54,9 +54,24 @@ export class ProductDetailsPage extends BasePage {
 
     @step("Verifying product details with expected details: {0}")
     async verifyProductDetails(expected: ProductDetails, options: VerificationOptions = {}) {
-        await BaseVerification.verifyText(this.productDetails.category, expected.category, options);
-        await BaseVerification.verifyText(this.productDetails.availavity, expected.availability, options);
-        await BaseVerification.verifyText(this.productDetails.condition, expected.condition, options);
-        await BaseVerification.verifyText(this.productDetails.brand, expected.brand, options);
+        if (Object.keys(expected).length === 0) {
+            throw new Error("Expected product details cannot be empty");
+        }
+        if (expected.category !== undefined) {
+            console.log(`==> Verifying product category: expected='${expected.category}'`);
+            await BaseVerification.verifyText(this.productDetails.category, expected.category, options);
+        }
+        if (expected.condition !== undefined) {
+            console.log(`==> Verifying product condition: expected='${expected.condition}'`);
+            await BaseVerification.verifyText(this.productDetails.condition, expected.condition, options);
+        }
+        if (expected.availability !== undefined) {
+            console.log(`==> Verifying product availability: expected='${expected.availability}'`);
+            await BaseVerification.verifyText(this.productDetails.availability, expected.availability, options);
+        }
+        if (expected.brand !== undefined) {
+            console.log(`==> Verifying product brand: expected='${expected.brand}'`);
+            await BaseVerification.verifyText(this.productDetails.brand, expected.brand, options);
+        }
     }
 }

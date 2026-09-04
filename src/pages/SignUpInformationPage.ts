@@ -79,7 +79,7 @@ export class SignUpInformationPage extends BasePage {
     }
 
     /* ** ACTION METHODS ** */
-    @step("Fill information form with: {0}")
+    @step("Filling information form with: {0}")
     async fillInformationForm(accountInfo: Partial<UserInfo>) {
         if (accountInfo.title !== undefined) {
             if (accountInfo.title !== "Mr" && accountInfo.title !== "Mrs") {
@@ -138,20 +138,20 @@ export class SignUpInformationPage extends BasePage {
             await this.informationForm.mobileNumberField.fill(accountInfo.mobile_number);
     }
 
-    @step("Submit information form")
+    @step("Submitting information form")
     async submitInformationForm() {
         await this.informationForm.createAccountButton.click();
     }
 
     /* ** VERIFICATION METHODS ** */
-    @step("Verify '{0}' form header is displayed correctly")
+    @step("Verifying '{0}' form header is displayed correctly")
     async verifyFormHeader(form: "account" | "address", options: VerificationOptions = {}) {
         const headerLocator = form === "account" ? this.informationForm.headers.first() : this.informationForm.headers.nth(1);
         const headerText = form === "account" ? this.HEADER_TEXT.ACCOUNT_INFORMATION : this.HEADER_TEXT.ADDRESS_INFORMATION;
         await BaseVerification.verifyText(headerLocator, headerText, options);
     }
 
-    @step("Verify current page is information form page")
+    @step("Verifying current page is information form page")
     async verifyCurrentPage(options: VerificationOptions = {}) {
         const expectedUrlRegex = new RegExp(`${this.URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
@@ -160,7 +160,7 @@ export class SignUpInformationPage extends BasePage {
         await this.verifyFormHeader("address", options);
     }
 
-    @step("Verify '{0}' field validation is displayed")
+    @step("Verifying '{0}' field validation is displayed")
     async verifyFormFieldIsInvalid(fieldName: string, options: VerificationOptions = {}) {
         const requiredFieldMap: Record<RequiredFields, Locator> = {
             name: this.informationForm.nameField,
@@ -182,7 +182,7 @@ export class SignUpInformationPage extends BasePage {
         await BaseVerification.verifyFieldIsInvalid(fieldLocator, options);
     }
 
-    @step("Verify '{0}' field is auto-filled with expected value '{1}'")
+    @step("Verifying '{0}' field is auto-filled with expected value '{1}'")
     async verifyAutoFilledData(field: string, expectedValue: string, options: VerificationOptions = {}) {
         const autoFilledFieldMap: Record<AutoFilledFields, Locator> = {
             name: this.informationForm.nameField,
@@ -195,7 +195,7 @@ export class SignUpInformationPage extends BasePage {
         await BaseVerification.verifyFieldValue(fieldLocator, expectedValue, options);
     }
 
-    @step("Verify email field is disabled")
+    @step("Verifying email field is disabled")
     async verifyDisabledEmailField(options: VerificationOptions = {}) {
         const expectFn = BaseVerification.getExpect(options.soft);
         const errorMsg = "Expected email field to be disabled";
@@ -205,7 +205,7 @@ export class SignUpInformationPage extends BasePage {
         );
     }
 
-    @step("Verify error message for '{0}' field is displayed correctly")
+    @step("Verifying error message for '{0}' field is displayed correctly")
     async verifyErrorMessage(fieldName: string, expectedMessage: string, options: VerificationOptions = {}) {
         if (!(fieldName in this.errorMessages)) {
             throw new Error(`Invalid field name: ${fieldName}. Valid options are: ${Object.keys(this.errorMessages).join(", ")}.`);

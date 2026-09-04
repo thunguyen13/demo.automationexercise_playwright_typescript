@@ -8,11 +8,21 @@ export type CardInfo = {
     price: string;
     name: string;
 }
-
 export type CardOverlayInfo = {
     price: string;
     name: string;
 }
+
+export const CATEGORIES = {
+    Women: ["Dress", "Tops", "Saree"],
+    Men: ["Tshirts", "Jeans"],
+    Kids: ["Dress", "Tops & Shirts"],
+} as const;
+export type MainCategory = keyof typeof CATEGORIES;
+export type SubCategory = (typeof CATEGORIES)[keyof typeof CATEGORIES][number];
+
+export const BRANDS = ["Polo", "H&M", "Madame", "Mast & Harbour", "Babyhug", "Allen Solly Junior", "Kookie Kids", "Biba"] as const;
+export type BrandName = (typeof BRANDS)[number];
 
 export class ListProduct {
     constructor(private page: Page) {}
@@ -35,6 +45,11 @@ export class ListProduct {
     private readonly search = {
         input: this.page.locator('#search_product'),
         button: this.page.locator('#submit_search'),
+    }
+    private readonly filter = {
+        mainCategory: (mainCategory: MainCategory) => this.page.locator(`a[href="#${mainCategory}"]`),
+        subCategory: (mainCategory: MainCategory, subCategory: SubCategory) => this.page.locator(`div[id="${mainCategory}"]`).getByRole('link', { name: new RegExp(`^\\s*${subCategory}\\s*$`, 'i') }),
+        brand: (brand: BrandName) => this.page.locator('div[class="brands-name"]').getByRole('link', { name: brand }),
     }
 
     /* ** CONSTANTS ** */
@@ -93,10 +108,44 @@ export class ListProduct {
         return count;
     }
 
+    @step("Getting the info of all product cards displayed on the page")
+    async getAllProductCardInfo(): Promise<CardInfo[]> {
+        const count = await this.getProductCardCount();
+        const productInfoList: CardInfo[] = [];
+        for (let i = 0; i < count; i++) {
+            const cardInfo = await this.getProductCardInfo({ index: i });
+            productInfoList.push(cardInfo);
+        }
+        return productInfoList;
+    }
+    
+    @step("Filtering by main category '{0}' and subcategory '{1}'")
+    async filterByCategory(mainCategory: string, subCategory: string) {
+        const categories = CATEGORIES as Record<string, readonly string[]>;
+        if (!categories[mainCategory]) {
+            throw new Error(`Invalid main category: ${mainCategory}. Valid categories: ${Object.keys(categories).join(', ')}`);
+        }
+        if (!categories[mainCategory].includes(subCategory)) {
+            throw new Error(`Invalid subcategory: ${subCategory} for main category: ${mainCategory}. Valid subcategories: ${categories[mainCategory].join(', ')}`);
+        }
+        await this.filter.mainCategory(mainCategory as MainCategory).click();
+        await this.filter.subCategory(mainCategory as MainCategory, subCategory as SubCategory).click();
+    }
+
+    @step("Filtering by brand '{0}'")
+    async filterByBrand(brand: string) {
+        const brands = BRANDS as readonly string[];
+        if (!brands.includes(brand)) {
+            throw new Error(`Invalid brand: ${brand}. Valid brands: ${brands.join(', ')}`);
+        }
+        await this.filter.brand(brand as BrandName).click();
+    }
+
     /* ** VERIFICATION METHODS ** */
 
     @step("Verifying the header text is '{0}'")
     async verifyHeaderText(expectedHeader: string, options: VerificationOptions = {}) {
+        console.log(`Verifying header text is '${expectedHeader}'`);
         await BaseVerification.verifyText(this.headerList, expectedHeader, options);
     }
 
