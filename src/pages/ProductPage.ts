@@ -1,23 +1,32 @@
-import { ListProduct } from "@components/ListProduct";
+import { BrandName, ListProduct, MainCategory, SubCategory } from "@components/ListProduct";
 import { BasePage } from "@core/ui/BasePage";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
-type CardIdentifier = { index: number, name: never } | { index: never, name: string };
+type FilteredBy = {
+    mainCategory: MainCategory,
+    subCategory: SubCategory
+    brand?: never
+} | {
+    mainCategory?: never,
+    subCategory?: never,
+    brand: BrandName
+}
 
 export class ProductPage extends BasePage {
+    public readonly listProduct: ListProduct;
     constructor(protected page: Page) {
         super(page);
+        this.listProduct = new ListProduct(this.page);
     }
-
-    public listProduct = new ListProduct(this.page);
 
     /* ** SELECTORS ** */
     private readonly search = {
         input: this.page.locator('input[id="search_product"]'),
         button: this.page.locator('button[id="submit_search"]'),
     }
+    private readonly filterBreadcrumb = this.page.locator('ol[class="breadcrumb"] li[class="active"]');
 
     /* ** CONSTANTS ** */
     public readonly PAGE_URL = "/products";
@@ -25,6 +34,11 @@ export class ProductPage extends BasePage {
 
 
     /* ** ACTION METHODS ** */
+    @step("Getting the current filter breadcrumb text")
+    async getCurrentFilterBreadcrumbText() {
+        return await this.filterBreadcrumb.innerText();
+    }
+
     @step("Navigating to the Product page")
     async navigateTo() {
         await this.page.goto(this.PAGE_URL);
@@ -67,4 +81,20 @@ export class ProductPage extends BasePage {
         }
     }
 
+    async verifyCurrentPage(isFilteredBy?: FilteredBy, options: VerificationOptions = {}) {
+        const expectedUrlRegex = new RegExp(`${this.PAGE_URL}$`)
+        await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
+        if (!isFilteredBy) {
+            await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+            await this.listProduct.verifyHeaderText("All Products", options);
+        } else {
+            const expectedTitle = this.PAGE_TITLE.replace("All", `${isFilteredBy.brand || isFilteredBy.subCategory}`);
+            await BaseVerification.verifyPageTitle(this.page, expectedTitle, options);
+            const expectedBreadcrumb = isFilteredBy.brand ? `${isFilteredBy.brand}` : `${isFilteredBy.mainCategory} > ${isFilteredBy.subCategory}`;
+            await BaseVerification.verifyText(this.filterBreadcrumb, expectedBreadcrumb, options);
+            const expectedListProductHeader = isFilteredBy.brand ? `Brand - ${isFilteredBy.brand} Products` : `${isFilteredBy.mainCategory} - ${isFilteredBy.subCategory} Products`;
+            await this.listProduct.verifyHeaderText(expectedListProductHeader, options);
+        }
+        await this.header.verifyItemIsSelected("products", options);
+    }
 }

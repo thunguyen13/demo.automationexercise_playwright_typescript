@@ -40,10 +40,8 @@ export class BaseVerification {
      */
     static async verifyText(locator: Locator, expectedText: string | RegExp, options: VerificationOptions = {}) {
         const expectFn = this.getExpect(options.soft);
-        const locatorStr = locator.toString();
-        const errorVisibleMsg = `Expected locator "${locatorStr}" to be visible`;
-        await this.expectWithLog(() => expectFn(locator, errorVisibleMsg).toBeVisible({ timeout: options.timeout }), errorVisibleMsg);
-        const errorHaveTextMsg = `Expected locator "${locatorStr}" to have text "${expectedText}"`;
+        await this.verifyElementIsVisible(locator, options);
+        const errorHaveTextMsg = `Expected locator "${locator.toString()}" to have text "${expectedText}"`;
         await this.expectWithLog(() => expectFn(locator, errorHaveTextMsg).toHaveText(expectedText, { timeout: options.timeout }), errorHaveTextMsg);
     }
 
@@ -79,27 +77,34 @@ export class BaseVerification {
      */
     static async verifyFieldValue(fieldLocator: Locator, expectedValue: string, options: VerificationOptions = {}) {
         const expectFn = this.getExpect(options.soft);
+        await this.verifyElementIsVisible(fieldLocator, options);
         const errorMsg = `Expected field "${fieldLocator.toString()}" to have value "${expectedValue}"`;
         await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toHaveValue(expectedValue, { timeout: options.timeout }), errorMsg);
     }
 
-    static async verifyElementIsVisible(fieldLocator: Locator, options: VerificationOptions = {}) {
+    static async verifyElementIsVisible(locator: Locator, options: VerificationOptions = {}) {
         const expectFn = this.getExpect(options.soft);
-        const errorMsg = `Expected field "${fieldLocator.toString()}" to be visible`;
-        await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toBeVisible({ timeout: options.timeout }), errorMsg);
+        const errorMsg = `Expected locator "${locator.toString()}" to be visible`;
+        await this.expectWithLog(() => expectFn(locator, errorMsg).toBeVisible({ timeout: options.timeout }), errorMsg);
     }
 
-    static async verifyElementIsHidden(fieldLocator: Locator, options: VerificationOptions = {}) {
+    static async verifyElementIsHidden(locator: Locator, options: VerificationOptions = {}) {
         const expectFn = this.getExpect(options.soft);
-        const errorMsg = `Expected field "${fieldLocator.toString()}" to be hidden`;
-        await this.expectWithLog(() => expectFn(fieldLocator, errorMsg).toBeHidden({ timeout: options.timeout }), errorMsg);
+        const errorMsg = `Expected locator "${locator.toString()}" to be hidden`;
+        await this.expectWithLog(() => expectFn(locator, errorMsg).toBeHidden({ timeout: options.timeout }), errorMsg);
     }
 
     static async verifyAttribute(locator: Locator, attributeName: string, expectedValue: string | RegExp, options: VerificationOptions = {}) {
         const expectFn = this.getExpect(options.soft);
-        const errorVisibleMsg = `Expected locator "${locator.toString()}" to be visible`;
-        await this.expectWithLog(() => expectFn(locator, errorVisibleMsg).toBeVisible({ timeout: options.timeout }), errorVisibleMsg);
+        await this.verifyElementIsVisible(locator, options);
         const errorAttributeMsg = `Expected locator "${locator.toString()}" to have attribute "${attributeName}" with value "${expectedValue}"`;
         await this.expectWithLog(() => expectFn(locator, errorAttributeMsg).toHaveAttribute(attributeName, expectedValue, { timeout: options.timeout }), errorAttributeMsg);
+    }
+
+    static async verifyElementCssProperty(locator: Locator, propertyName: string, expectedValue: string | RegExp, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
+        await this.verifyElementIsVisible(locator, options);
+        const errorCssPropertyMsg = `Expected locator "${locator.toString()}" to have CSS property "${propertyName}" with value "${expectedValue}"`;
+        await this.expectWithLog(() => expectFn(locator, errorCssPropertyMsg).toHaveCSS(propertyName, expectedValue, { timeout: options.timeout }), errorCssPropertyMsg);
     }
 }

@@ -1,3 +1,4 @@
+import { CartModal } from "@components/CartModal";
 import { CardInfo } from "@components/ListProduct";
 import { BasePage } from "@core/ui/BasePage";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
@@ -12,8 +13,10 @@ export type ProductDetails = {
 }
 
 export class ProductDetailsPage extends BasePage {
+    public readonly cartModal: CartModal;
     constructor(protected page: Page) {
         super(page);
+        this.cartModal = new CartModal(this.page);
     }
 
     /* ** SELECTORS ** */
@@ -31,20 +34,28 @@ export class ProductDetailsPage extends BasePage {
         condition: this.productDetailsContainer.locator('p', { hasText: /condition/i }),
         brand: this.productDetailsContainer.locator('p', { hasText: /brand/i }),
     }
-    
 
     /* ** CONSTANTS ** */
     public readonly PAGE_TITLE = "Automation Exercise - Product Details";
+    public readonly PAGE_URL = "/product_details";
 
 
     /* ** ACTION METHODS ** */
-    @step("Adding product to cart with quantity '{0}'")
+    @step("Adding product to cart with quantity '{1}'")
     async addProductToCart(quantity: number = 1) {
         await this.productDetails.quantityInput.fill(quantity.toString());
         await this.productDetails.addToCartButton.click();
     }
 
     /* ** VERIFICATION METHODS ** */
+    @step("Verifying current page with product details: {0}")
+    async verifyCurrentPage(producDetails: CardInfo, options: VerificationOptions = {}) {
+        const expectedUrl = new RegExp(`${this.PAGE_URL}/${producDetails.id}$`);
+        await BaseVerification.verifyCurrentUrl(this.page, expectedUrl, options);
+        await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+        await this.verifyProductSummary(producDetails, options);
+    }
+
     @step("Verifying product identity with expected details: {0}")
     async verifyProductSummary(expected: CardInfo, options: VerificationOptions = {}) {
         await BaseVerification.verifyText(this.productDetails.name, expected.name, options);
