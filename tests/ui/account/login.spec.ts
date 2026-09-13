@@ -1,5 +1,5 @@
 import { LogInPage } from "@pages/LogInSignUpPage";
-import { test } from "@fixtures/ui/auth";
+import { test } from "@fixtures/ui/common";
 import { invalidLoginData, validAccInfo } from "@data/ui/account";
 import { BaseValidator } from "@core/api/BaseValidator";
 import { getRequiredField } from "@utils/helpers";

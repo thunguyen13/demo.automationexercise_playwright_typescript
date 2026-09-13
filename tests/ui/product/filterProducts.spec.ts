@@ -1,5 +1,5 @@
 import { filterBrand, filterCategory } from '../../../src/data/ui/product';
-import { test } from "@fixtures/ui/auth";
+import { test } from "@fixtures/ui/common";
 import { ProductDetailsPage } from "@pages/ProductDetailsPage";
 import { ProductPage } from "@pages/ProductPage";
 import { getRandomIndexList } from '@utils/helpers';

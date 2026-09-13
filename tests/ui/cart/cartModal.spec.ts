@@ -1,4 +1,4 @@
-import { test } from "@fixtures/ui/auth";
+import { test } from "@fixtures/ui/common";
 import { CartPage } from "@pages/CartPage";
 import { HomePage } from "@pages/HomePage";
 import { ProductDetailsPage } from "@pages/ProductDetailsPage";

@@ -1,5 +1,5 @@
 import { search } from './../../../src/data/ui/product';
-import { test } from "@fixtures/ui/auth";
+import { test } from "@fixtures/ui/common";
 import { ProductPage } from "@pages/ProductPage";
 
 
