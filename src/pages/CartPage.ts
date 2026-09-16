@@ -3,12 +3,12 @@ import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification
 import { Locator, Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
-type CartProduct = {
+export type CartProduct = {
     name: string;
     category?: string;
     price: string;
     quantity: number;
-    img_src?: string;
+    imageSrc?: string | null;
 }
 
 export class CartPage extends BasePage {
@@ -20,10 +20,10 @@ export class CartPage extends BasePage {
     private readonly proceedToCheckoutButton = this.page.getByRole('link', { name: 'Proceed To Checkout' });
     private readonly container = this.page.locator("#cart_info");
     private readonly empty = {
-        message: this.container.locator("span[id='empty_cart']"),
+        message: this.container.locator('span[id="empty_cart"]'),
         hereButton: this.container.getByRole('link', { name: 'here' }),
     }
-    private readonly cartInfoTable = this.container.locator("table[id='cart_info_table']");
+    private readonly cartInfoTable = this.container.locator('table[id="cart_info_table"]');
     private readonly cartInfoTableHeaders = {
         item: this.cartInfoTable.locator('thead td[class="image"]'),
         description: this.cartInfoTable.locator('thead td[class="description"]'),
@@ -40,18 +40,11 @@ export class CartPage extends BasePage {
         name: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_description"] h4 a'),
         category: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_description"] p'),
         price: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_price"] p'),
-        quantity: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_quantity"] p'),
+        quantity: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_quantity"] button'),
         total: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_total"] p'),
         deleteButton: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_delete"] a'),
     }
     private readonly breadcrumb = this.page.locator('ol[class="breadcrumb"] li[class="active"]');
-    // private readonly productDetails = {
-    //     image: (parent?: Locator) => (parent ?? this.page).locator('a > img'),
-    //     name: (parent?: Locator) => (parent ?? this.page).locator('h4 a'),
-    //     category: (parent?: Locator) => (parent ?? this.page).locator('p'),
-    //     price: (parent?: Locator) => (parent ?? this.page).locator('p'),
-    // }
-    // private readonly deleteProductButtons = (parent?: Locator) => (parent ?? this.page).locator('a[class="cart_quantity_delete"]');
 
     /* ** CONSTANTS ** */
     public readonly PAGE_URL = "/view_cart";
@@ -72,22 +65,16 @@ export class CartPage extends BasePage {
     getProductRow(by: {name: string, price?: string, category?: string}) {
         let rows = this.cartInfoTableRows;
         rows = rows.filter({
-            has: this.cartProducts.name().filter({
-                hasText: by.name
-            })
+            hasText: by.name
         })
         if (by.price) {
             rows = rows.filter({
-                has: this.cartProducts.price().filter({
-                    hasText: by.price
-                })
+                hasText: by.price
             })
         }
         if (by.category) {
             rows = rows.filter({
-                has: this.cartProducts.category().filter({
-                    hasText: by.category
-                })
+                hasText: by.category
             })
         }
         return rows;
@@ -152,9 +139,10 @@ export class CartPage extends BasePage {
             await BaseVerification.verifyText(priceLocator, product.price, options);
             const quantityLocator = this.cartProducts.quantity(productRow);
             await BaseVerification.verifyText(quantityLocator, product.quantity.toString(), options);
-            if (product.img_src) {
+            if (product.imageSrc) {
                 const imgLocator = this.cartProducts.image(productRow);
-                await BaseVerification.verifyElementCssProperty(imgLocator, 'src', product.img_src, options);
+                const expectedImgSrc = product.imageSrc.replace(/^\/+/,'');
+                await BaseVerification.verifyElementHasAttribute(imgLocator, 'src', expectedImgSrc, options);
             }
             if (product.category) {
                 const categoryLocator = this.cartProducts.category(productRow);

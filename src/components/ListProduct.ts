@@ -85,6 +85,7 @@ export class ListProduct {
     async clickViewProductButton(identifier: CardIdentifier) {
         const card = this.getProductCard(identifier);
         await this.productCard.viewProductButton(card).click();
+        await this.waitForReady();
     }
 
     @step("Hovering over the product card with '{0}'")
@@ -129,6 +130,11 @@ export class ListProduct {
         }
         return productInfoList;
     }
+
+    @step("Waiting for the page to become ready")
+    async waitForReady() {
+        await this.page.waitForLoadState('load');
+    }
     
     @step("Filtering by main category '{0}' and subcategory '{1}'")
     async filterByCategory(mainCategory: string, subCategory: string) {
@@ -141,6 +147,7 @@ export class ListProduct {
         }
         await this.filter.mainCategory(mainCategory as MainCategory).click();
         await this.filter.subCategory(mainCategory as MainCategory, subCategory as SubCategory).click();
+        await this.waitForReady();
     }
 
     @step("Filtering by brand '{0}'")
@@ -150,6 +157,7 @@ export class ListProduct {
             throw new Error(`Invalid brand: ${brand}. Valid brands: ${brands.join(', ')}`);
         }
         await this.filter.brand(brand as BrandName).click();
+        await this.waitForReady();
     }
 
     /* ** VERIFICATION METHODS ** */

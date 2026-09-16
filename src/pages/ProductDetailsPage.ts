@@ -5,7 +5,7 @@ import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification
 import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
-export type ProductDetails = {
+export type ProductDescription = {
     category?: string;
     availability?: string;
     condition?: string;
@@ -41,6 +41,29 @@ export class ProductDetailsPage extends BasePage {
 
 
     /* ** ACTION METHODS ** */
+    @step("Getting product details")
+    async getProductDetails(): Promise<CardInfo & ProductDescription> {
+        const currentUrl = this.page.url();
+        const id = currentUrl.split("/").pop();
+        const name = await this.productDetails.name.textContent();
+        const price = await this.productDetails.price.textContent();
+        const imageSrc = await this.productDetails.image.getAttribute("src");
+        const category = await this.productDetails.category.textContent();
+        const availability = await this.productDetails.availability.textContent();
+        const condition = await this.productDetails.condition.textContent();
+        const brand = await this.productDetails.brand.textContent();
+        return {
+            id: id ?? "",
+            name: name ?? "",
+            price: price ?? "",
+            imageSrc,
+            category: category?.replace(/Category:/i, "").trim(),
+            availability: availability?.replace(/Availability:/i, "").trim(),
+            condition: condition?.replace(/Condition:/i, "").trim(),
+            brand: brand?.replace(/Brand:/i, "").trim(),
+        }
+    }
+
     @step("Adding product to cart with quantity '{1}'")
     async addProductToCart(quantity: number = 1) {
         await this.productDetails.quantityInput.fill(quantity.toString());
@@ -63,26 +86,55 @@ export class ProductDetailsPage extends BasePage {
         await BaseVerification.verifyAttribute(this.productDetails.image, "src", expected.imageSrc ?? "", options);
     }
 
+    // @step("Verifying product details with expected details: {0}")
+    // async verifyProductDetails(expected: ProductDetails, options: VerificationOptions = {}) {
+    //     if (Object.keys(expected).length === 0) {
+    //         throw new Error("Expected product details cannot be empty");
+    //     }
+    //     if (expected.category !== undefined) {
+    //         console.log(`==> Verifying product category: expected='${expected.category}'`);
+    //         await BaseVerification.verifyText(this.productDetails.category, expected.category, options);
+    //     }
+    //     if (expected.condition !== undefined) {
+    //         console.log(`==> Verifying product condition: expected='${expected.condition}'`);
+    //         await BaseVerification.verifyText(this.productDetails.condition, expected.condition, options);
+    //     }
+    //     if (expected.availability !== undefined) {
+    //         console.log(`==> Verifying product availability: expected='${expected.availability}'`);
+    //         await BaseVerification.verifyText(this.productDetails.availability, expected.availability, options);
+    //     }
+    //     if (expected.brand !== undefined) {
+    //         console.log(`==> Verifying product brand: expected='${expected.brand}'`);
+    //         await BaseVerification.verifyText(this.productDetails.brand, expected.brand, options);
+    //     }
+    // }
+
     @step("Verifying product details with expected details: {0}")
-    async verifyProductDetails(expected: ProductDetails, options: VerificationOptions = {}) {
+    async verifyProductDescription(expected: ProductDescription, options: VerificationOptions = {}) {
+        const expectFn = BaseVerification.getExpect(options.soft);
+        const actualProductDetails = await this.getProductDetails();
         if (Object.keys(expected).length === 0) {
             throw new Error("Expected product details cannot be empty");
         }
         if (expected.category !== undefined) {
             console.log(`==> Verifying product category: expected='${expected.category}'`);
-            await BaseVerification.verifyText(this.productDetails.category, expected.category, options);
+            const errorMsg = `Expected product category to be '${expected.category}' but found '${actualProductDetails.category}'`;
+            await BaseVerification.expectWithLog(() => expectFn(actualProductDetails.category, errorMsg).toEqual(expected.category), errorMsg);
         }
         if (expected.condition !== undefined) {
             console.log(`==> Verifying product condition: expected='${expected.condition}'`);
-            await BaseVerification.verifyText(this.productDetails.condition, expected.condition, options);
+            const errorMsg = `Expected product condition to be '${expected.condition}' but found '${actualProductDetails.condition}'`;
+            await BaseVerification.expectWithLog(() => expectFn(actualProductDetails.condition, errorMsg).toEqual(expected.condition), errorMsg);
         }
         if (expected.availability !== undefined) {
             console.log(`==> Verifying product availability: expected='${expected.availability}'`);
-            await BaseVerification.verifyText(this.productDetails.availability, expected.availability, options);
+            const errorMsg = `Expected product availability to be '${expected.availability}' but found '${actualProductDetails.availability}'`;
+            await BaseVerification.expectWithLog(() => expectFn(actualProductDetails.availability, errorMsg).toEqual(expected.availability), errorMsg);
         }
         if (expected.brand !== undefined) {
             console.log(`==> Verifying product brand: expected='${expected.brand}'`);
-            await BaseVerification.verifyText(this.productDetails.brand, expected.brand, options);
+            const errorMsg = `Expected product brand to be '${expected.brand}' but found '${actualProductDetails.brand}'`;
+            await BaseVerification.expectWithLog(() => expectFn(actualProductDetails.brand, errorMsg).toEqual(expected.brand), errorMsg);
         }
     }
 }

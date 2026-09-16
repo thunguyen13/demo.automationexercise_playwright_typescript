@@ -12,7 +12,8 @@ test.describe("Filter Products By Category", () => {
             const listProduct = productPage.listProduct;
             const producDetailsPage = new ProductDetailsPage(page);
             const expectedHeader = `${testCase.mainCategory} - ${testCase.subCategory} Products`;
-            const expectedCategoryText = `Category: ${testCase.mainCategory} > ${testCase.subCategory}`;
+            // const expectedCategoryText = `Category: ${testCase.mainCategory} > ${testCase.subCategory}`;
+            const expectedCategoryText = `${testCase.mainCategory} > ${testCase.subCategory}`;
 
             await productPage.navigateTo();
             await listProduct.filterByCategory(testCase.mainCategory, testCase.subCategory);
@@ -24,7 +25,7 @@ test.describe("Filter Products By Category", () => {
             for (const index of randomIndexes) {
                 await test.step(`Verifying product category for product at index ${index} is ${expectedCategoryText}`, async () => {
                     await listProduct.clickViewProductButton({index: index});
-                    await producDetailsPage.verifyProductDetails({category: expectedCategoryText});
+                    await producDetailsPage.verifyProductDescription({category: expectedCategoryText});
                     await producDetailsPage.goBack();
                 });
             }
@@ -39,7 +40,8 @@ test.describe("Filter Products By Brand", () => {
             const listProduct = productPage.listProduct;
             const producDetailsPage = new ProductDetailsPage(page);
             const expectedHeader = `Brand - ${testCase.brand} Products`;
-            const expectedBrandText = `Brand: ${testCase.brand}`;
+            // const expectedBrandText = `Brand: ${testCase.brand}`;
+            const expectedBrandText = testCase.brand;
 
             await productPage.navigateTo();
             await listProduct.filterByBrand(testCase.brand);
@@ -51,7 +53,7 @@ test.describe("Filter Products By Brand", () => {
             for (const index of randomIndexes) {
                 await test.step(`Verifying product brand for product at index ${index} is ${expectedBrandText}`, async () => {
                     await listProduct.clickViewProductButton({index: index});
-                    await producDetailsPage.verifyProductDetails({brand: expectedBrandText});
+                    await producDetailsPage.verifyProductDescription({brand: expectedBrandText});
                     await producDetailsPage.goBack();
                 })
             }

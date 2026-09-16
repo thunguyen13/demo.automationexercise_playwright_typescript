@@ -107,4 +107,11 @@ export class BaseVerification {
         const errorCssPropertyMsg = `Expected locator "${locator.toString()}" to have CSS property "${propertyName}" with value "${expectedValue}"`;
         await this.expectWithLog(() => expectFn(locator, errorCssPropertyMsg).toHaveCSS(propertyName, expectedValue, { timeout: options.timeout }), errorCssPropertyMsg);
     }
+
+    static async verifyElementHasAttribute(locator: Locator, attributeName: string, attributeValue: string | RegExp, options: VerificationOptions = {}) {
+        const expectFn = this.getExpect(options.soft);
+        await this.verifyElementIsVisible(locator, options);
+        const errorAttributeMsg = `Expected locator "${locator.toString()}" to have attribute "${attributeName}"`;
+        await this.expectWithLog(() => expectFn(locator, errorAttributeMsg).toHaveAttribute(attributeName, attributeValue, { timeout: options.timeout }), errorAttributeMsg);
+    }
 }

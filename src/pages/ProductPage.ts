@@ -48,6 +48,7 @@ export class ProductPage extends BasePage {
     async searchProduct(name: string) {
         await this.search.input.fill(name);
         await this.search.button.click();
+        await this.waitForPageLoad();
     }
 
     /* ** VERIFICATION METHODS ** */

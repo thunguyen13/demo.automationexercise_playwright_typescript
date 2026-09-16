@@ -1,7 +1,5 @@
 import { BRANDS, CATEGORIES, MainCategory, SubCategory } from "@components/ListProduct"
 
-
-
 type SearchCase = {
     keyword: string,
     hasResult: boolean,
