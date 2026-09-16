@@ -52,7 +52,6 @@ test.describe("Cart Modal In Product Details", () => {
         const randomIndex = getRandomInt(0, productCardCount - 1);
         const productInfo = await listProduct.getProductCardInfo({index: randomIndex});
         await listProduct.clickViewProductButton({index: randomIndex});
-        await productDetailsPage.waitForPageLoad();
         await productDetailsPage.addProductToCart();
         await cartModal.verifyCartModalIsVisible();
         await cartModal.clickContinueShopping();
@@ -71,7 +70,6 @@ test.describe("Cart Modal In Product Details", () => {
         const productCardCount = await listProduct.getProductCardCount();
         const randomIndex = getRandomInt(0, productCardCount - 1);
         await listProduct.clickViewProductButton({index: randomIndex});
-        await productDetailsPage.waitForPageLoad();
         await productDetailsPage.addProductToCart();
         await cartModal.verifyCartModalIsVisible();
         await cartModal.clickViewCart();
