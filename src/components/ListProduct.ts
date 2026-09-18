@@ -1,14 +1,17 @@
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Locator, Page } from "@playwright/test";
 import { step } from "@utils/logger";
+import { CartModal } from "./CartModal";
 
 export type CardIdentifier = { index: number, name?: never } | { index?: never, name: string };
 export type CardInfo = {
+    id: string | number;
     imageSrc: string | null;
     price: string;
     name: string;
 }
 export type CardOverlayInfo = {
+    id: string | number;
     price: string;
     name: string;
 }
@@ -25,7 +28,10 @@ export const BRANDS = ["Polo", "H&M", "Madame", "Mast & Harbour", "Babyhug", "Al
 export type BrandName = (typeof BRANDS)[number];
 
 export class ListProduct {
-    constructor(private page: Page) {}
+    public readonly cartModal: CartModal;
+    constructor(private page: Page) {
+        this.cartModal = new CartModal(this.page);
+    }
 
     /* ** SELECTORS ** */
     private readonly headerList = this.page.locator('div[class*="features_items"] h2[class*="title"]');
@@ -34,17 +40,13 @@ export class ListProduct {
         image: (parent?: Locator) => (parent ?? this.page).locator('div[class*="productinfo"] > img'),
         price: (parent?: Locator) => (parent ?? this.page).locator('div[class*="productinfo"] > h2'),
         name: (parent?: Locator) => (parent ?? this.page).locator('div[class*="productinfo"] > p'),
-        addToCartButton: (parent?: Locator) => (parent ?? this.page).locator('div[class*="productinfo"]').getByRole('button', { name: 'Add to cart' }),
+        addToCartButton: (parent?: Locator) => (parent ?? this.page).locator('div[class*="productinfo"] a[class*="add-to-cart"]'),
         viewProductButton: (parent?: Locator) => (parent ?? this.page).getByRole('link', { name: 'View Product' }),
     }
     private readonly productCardOverlay = {
         price: (parent?: Locator) => (parent ?? this.page).locator('div[class*="product-overlay"] h2'),
         name: (parent?: Locator) => (parent ?? this.page).locator('div[class*="product-overlay"] p'),
-        addToCartButton: (parent?: Locator) => (parent ?? this.page).locator('div[class*="product-overlay"]').getByRole('button', { name: 'Add to cart' }),
-    }
-    private readonly search = {
-        input: this.page.locator('#search_product'),
-        button: this.page.locator('#submit_search'),
+        addToCartButton: (parent?: Locator) => (parent ?? this.page).locator('div[class*="product-overlay"] a[class*="add-to-cart"]'),
     }
     private readonly filter = {
         mainCategory: (mainCategory: MainCategory) => this.page.locator(`a[href="#${mainCategory}"]`),
@@ -75,13 +77,15 @@ export class ListProduct {
     @step("Clicking the 'Add to cart' button for the product card with '{0}'")
     async clickAddToCartButton(identifier: CardIdentifier) {
         const card = this.getProductCard(identifier);
-        await this.productCard.addToCartButton(card).click();
+        await card.hover();
+        await this.productCardOverlay.addToCartButton(card).click();
     }
 
     @step("Clicking the 'View Product' button for the product card with '{0}'")
     async clickViewProductButton(identifier: CardIdentifier) {
         const card = this.getProductCard(identifier);
         await this.productCard.viewProductButton(card).click();
+        await this.waitForReady();
     }
 
     @step("Hovering over the product card with '{0}'")
@@ -90,7 +94,11 @@ export class ListProduct {
         await card.hover();
         const price = await this.productCardOverlay.price(card).innerText();
         const name = await this.productCardOverlay.name(card).innerText();
-        return { price, name };
+        const id = await this.productCardOverlay.addToCartButton(card).getAttribute('data-product-id');
+        if (!id) {
+            throw new Error(`Failed to get product id from overlay for card with identifier: ${JSON.stringify(identifier)}`);
+        }
+        return { id, price, name };
     }
 
     @step("Getting the info of the product card with '{0}'")
@@ -99,7 +107,11 @@ export class ListProduct {
         const imageSrc = await this.productCard.image(card).getAttribute('src');
         const price = await this.productCard.price(card).innerText();
         const name = await this.productCard.name(card).innerText();
-        return { imageSrc, price, name };
+        const id = await this.productCard.addToCartButton(card).getAttribute('data-product-id');
+        if (!id) {
+            throw new Error(`Failed to get product id from card with identifier: ${JSON.stringify(identifier)}`);
+        }
+        return { id, imageSrc, price, name };
     }
 
     @step("Getting the count of product cards displayed on the page")
@@ -118,6 +130,11 @@ export class ListProduct {
         }
         return productInfoList;
     }
+
+    @step("Waiting for the page to become ready")
+    async waitForReady() {
+        await this.page.waitForLoadState('load');
+    }
     
     @step("Filtering by main category '{0}' and subcategory '{1}'")
     async filterByCategory(mainCategory: string, subCategory: string) {
@@ -130,6 +147,7 @@ export class ListProduct {
         }
         await this.filter.mainCategory(mainCategory as MainCategory).click();
         await this.filter.subCategory(mainCategory as MainCategory, subCategory as SubCategory).click();
+        await this.waitForReady();
     }
 
     @step("Filtering by brand '{0}'")
@@ -139,10 +157,10 @@ export class ListProduct {
             throw new Error(`Invalid brand: ${brand}. Valid brands: ${brands.join(', ')}`);
         }
         await this.filter.brand(brand as BrandName).click();
+        await this.waitForReady();
     }
 
     /* ** VERIFICATION METHODS ** */
-
     @step("Verifying the header text is '{0}'")
     async verifyHeaderText(expectedHeader: string, options: VerificationOptions = {}) {
         console.log(`Verifying header text is '${expectedHeader}'`);

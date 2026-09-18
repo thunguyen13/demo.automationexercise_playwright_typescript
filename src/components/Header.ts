@@ -61,4 +61,10 @@ export class Header {
     async verifyLoggedInAsText(expectedText: string, options: VerificationOptions = {}) {
         await BaseVerification.verifyText(this.menuItems.loggedInAs, expectedText, options);
     }
+
+    async verifyItemIsSelected(item: keyof typeof this.menuItems, options: VerificationOptions = {}) {
+        const property = "color";
+        const expectedValue = "rgb(255, 165, 0)"; // Orange color
+        await BaseVerification.verifyElementCssProperty(this.menuItems[item], property, expectedValue, options);
+    }
 }

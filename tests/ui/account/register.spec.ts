@@ -1,6 +1,6 @@
 import { LogInPage } from "@pages/LogInSignUpPage";
 import { SignUpInformationPage } from "@pages/SignUpInformationPage";
-import { test } from "@fixtures/ui/auth";
+import { test } from "@fixtures/ui/common";
 import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_misingFieldData, validAccInfo } from "@data/ui/account";
 import { AccountCreatedPage } from "@pages/AccountCreatedPage";
 import { BaseValidator } from "@core/api/BaseValidator";

@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 
 /**
  * To get the current date and time in the format "dd-mm-yyyy_HH-MM-SS" for the Vietnam timezone (Asia/Ho_Chi_Minh)
@@ -102,11 +103,11 @@ export function getRequiredField(obj: object, fieldPath: string) {
  * @param count - The number of unique random indexes to select from the array.
  * @returns - An array of unique random indexes selected from the range of 0 to arrayLength - 1.
  */
-export function getRandomIndexList(arrayLength: number, count: number): number[] {
-    if (arrayLength <= 0 || count <= 0) 
+export function getRandomIndexList(arrayLength: number, expectedNewLength: number): number[] {
+    if (arrayLength <= 0 || expectedNewLength <= 0) 
         throw new Error("Array length and count must be greater than 0.");
-    if (count > arrayLength)
-        throw new Error("Count cannot be greater than array length.");
+    if (expectedNewLength > arrayLength)
+        throw new Error("Expected new length cannot be greater than array length.");
 
     const indexes = Array.from({ length: arrayLength }, (_, i) => i);
 
@@ -115,7 +116,7 @@ export function getRandomIndexList(arrayLength: number, count: number): number[]
         [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
     }
 
-    return indexes.slice(0, count);
+    return indexes.slice(0, expectedNewLength);
 }
 
 /**

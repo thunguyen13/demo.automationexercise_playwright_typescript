@@ -74,8 +74,9 @@ export class LogInPage extends BasePage {
         const expectedUrlRegex = new RegExp(`${this.LOGIN_URL}$|${this.SIGNUP_URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
         await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+        await this.header.verifyItemIsVisible("signUpLogIn", options);
         await this.verifyFormHeader("login", options);
-        await this.verifyFormHeader("signup", options);    
+        await this.verifyFormHeader("signup", options);
     }
 
     @step("Verifying '{0}' field validation for log in form is displayed correctly")

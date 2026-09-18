@@ -1,7 +1,5 @@
 import { BRANDS, CATEGORIES, MainCategory, SubCategory } from "@components/ListProduct"
 
-
-
 type SearchCase = {
     keyword: string,
     hasResult: boolean,
@@ -64,3 +62,19 @@ export const filterBrand: FilterBrandCase[] = [
     }
 ]
 
+export const productData = [
+    {
+        name: "Fancy Green Top",
+        category: "Women > Tops",
+        price: "Rs. 700",
+        img_src: "/get_product_picture/8",
+        brand: "Polo"
+    },
+    {
+        name: "Colour Blocked Shirt – Sky Blue",
+        category: "Kids > Tops & Shirts",
+        price: "Rs. 849",
+        img_src: "/get_product_picture/24",
+        brand: "Allen Solly Junior"
+    }
+]

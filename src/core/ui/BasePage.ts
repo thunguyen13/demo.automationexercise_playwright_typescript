@@ -17,18 +17,23 @@ export abstract class BasePage {
         await this.scrollUpBtn.click();
     }
 
+    @step("Wait for page load")
+    async waitForPageLoad(waitType: "load" | "domcontentloaded" | "networkidle" = "load", timeout?: number) {
+        await this.page.waitForLoadState(waitType, { timeout });
+    }
+
     @step("Back to previous page")
-    async goBack() {
-        await this.page.goBack();
+    async goBack(waitType: "load" | "domcontentloaded" | "networkidle" = "load", timeout?: number) {
+        await this.page.goBack({ waitUntil: waitType, timeout });
     }
 
     @step("Forward to next page")
-    async goForward() {
-        await this.page.goForward();
+    async goForward(waitType: "load" | "domcontentloaded" | "networkidle" = "load", timeout?: number) {
+        await this.page.goForward({ waitUntil: waitType, timeout });
     }
 
     @step("Refresh the page")
-    async refresh() {
-        await this.page.reload();
+    async refresh(waitType: "load" | "domcontentloaded" | "networkidle" = "load", timeout?: number) {
+        await this.page.reload({ waitUntil: waitType, timeout });
     }
 }

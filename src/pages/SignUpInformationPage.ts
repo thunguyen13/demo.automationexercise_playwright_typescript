@@ -156,6 +156,7 @@ export class SignUpInformationPage extends BasePage {
         const expectedUrlRegex = new RegExp(`${this.URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrlRegex, options);
         await BaseVerification.verifyPageTitle(this.page, this.PAGE_TITLE, options);
+        await this.header.verifyItemIsVisible("signUpLogIn", options);
         await this.verifyFormHeader("account", options);
         await this.verifyFormHeader("address", options);
     }
