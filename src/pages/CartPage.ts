@@ -80,6 +80,11 @@ export class CartPage extends BasePage {
         return rows;
     }
 
+    @step("Navigating to cart page")
+    async navigateTo() {
+        await this.page.goto(this.PAGE_URL);
+    }
+
     @step("Clicking on 'Here' button in empty cart message")
     async clickHereButton() {
         await this.empty.hereButton.click();
@@ -102,7 +107,7 @@ export class CartPage extends BasePage {
     }
 
     /* ** VERIFICATION METHODS ** */
-
+    @step("Verify current page is cart page and empty state should be {0}")
     async verifyCurrentPage(isEmpty: boolean = false, options: VerificationOptions = {}) {
         const expectedUrl = new RegExp(`${this.PAGE_URL}$`);
         await BaseVerification.verifyCurrentUrl(this.page, expectedUrl, options);
@@ -171,5 +176,11 @@ export class CartPage extends BasePage {
         const [, currency, valueText] = match;
         const value = Number(valueText.replace(/,./g, ''));
         return { currency, value };
+    }
+
+    @step("Verify cart is empty")
+    async verifyCartIsEmpty(options: VerificationOptions = {}) {
+        await BaseVerification.verifyText(this.empty.message, this.EMPTY_CART_MESSAGE, options);
+        await BaseVerification.verifyElementIsHidden(this.cartInfoTable, options);
     }
 }
