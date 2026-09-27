@@ -8,7 +8,7 @@ import { step } from "@utils/logger";
 
 export class HomePage extends BasePage {
     public readonly listProduct: ListProduct
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
         this.listProduct = new ListProduct(this.page);
     }

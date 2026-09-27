@@ -16,7 +16,7 @@ type FilteredBy = {
 
 export class ProductPage extends BasePage {
     public readonly listProduct: ListProduct;
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
         this.listProduct = new ListProduct(this.page);
     }

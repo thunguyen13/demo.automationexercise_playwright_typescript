@@ -11,8 +11,19 @@ export type CartProduct = {
     imageSrc?: string | null;
 }
 
+export type ProductRowIdentifier = {
+    name: string;
+    category?: string;
+    price?: string;
+}
+
+export type ParsedPrice = {
+    currency: string;
+    value: number;
+}
+
 export class CartPage extends BasePage {
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
     }
 
@@ -62,22 +73,22 @@ export class CartPage extends BasePage {
 
 
     /* ** ACTION METHODS ** */
-    getProductRow(by: {name: string, price?: string, category?: string}) {
+    getProductRow(by: ProductRowIdentifier) {
         let rows = this.cartInfoTableRows;
-        rows = rows.filter({
+        let row = rows.filter({
             hasText: by.name
         })
         if (by.price) {
-            rows = rows.filter({
+            row = row.filter({
                 hasText: by.price
             })
         }
         if (by.category) {
-            rows = rows.filter({
+            row = row.filter({
                 hasText: by.category
             })
         }
-        return rows;
+        return row;
     }
 
     @step("Navigating to cart page")
@@ -96,13 +107,15 @@ export class CartPage extends BasePage {
     }
 
     @step("Deleting product(s) from cart: {0}")
-    async deleteProduct(by: {name: string, price?: string, category?: string}[]) {
-        for (const product of by) {
-            const rows = this.getProductRow(product);
-            if (await rows.count() === 0) {
-                throw new Error(`Product not found in cart: ${JSON.stringify(product)}`);
-            }
-            await this.cartProducts.deleteButton(rows.first()).click(); 
+    async deleteProducts(products: ProductRowIdentifier[]) {
+        for (const product of products) {
+            const row = this.getProductRow(product);
+            await Promise.all([
+                this.page.waitForResponse(
+                    response => response.url().includes("/delete_cart")
+                ),
+                this.cartProducts.deleteButton(row).click()
+            ])
         }
     }
 
@@ -115,29 +128,23 @@ export class CartPage extends BasePage {
         await this.header.verifyItemIsSelected("cart", options);
         await BaseVerification.verifyText(this.breadcrumb, this.PAGE_BREADCRUMB, options);
         if (isEmpty) {
-            await BaseVerification.verifyText(this.empty.message, this.EMPTY_CART_MESSAGE, options);
+            await this.verifyCartIsEmpty(options);
         } else {
-            await BaseVerification.verifyElementIsHidden(this.empty.message, options);
-            await BaseVerification.verifyText(this.cartInfoTableHeaders.item, this.TABLE_HEADERS.ITEM, options);
-            await BaseVerification.verifyText(this.cartInfoTableHeaders.description, this.TABLE_HEADERS.DESCRIPTION, options);
-            await BaseVerification.verifyText(this.cartInfoTableHeaders.price, this.TABLE_HEADERS.PRICE, options);
-            await BaseVerification.verifyText(this.cartInfoTableHeaders.quantity, this.TABLE_HEADERS.QUANTITY, options);
-            await BaseVerification.verifyText(this.cartInfoTableHeaders.total, this.TABLE_HEADERS.TOTAL, options);
+            await this.verifyCartIsNotEmpty(options);
         }
     }
 
     @step("Verifying products in cart: {0}")
     async verifyProductsInCart(products: CartProduct[], options: VerificationOptions = {}) {
         const rows = this.cartInfoTableRows;
-        const rowsCount = await rows.count();
-        if (rowsCount !== products.length) {
-            throw new Error(`Expected ${products.length} products in cart, but found ${rowsCount}`);
-        }
+        const actualRowCount = await rows.count();
+        const expectedRowCount = products.length;
+        const expectFn = BaseVerification.getExpect(options.soft);
+        const errMsg = `Expected ${expectedRowCount} row(s) in cart, but found ${actualRowCount} row(s)`;
+        await BaseVerification.expectWithLog(() => expectFn(actualRowCount, errMsg).toEqual(expectedRowCount), errMsg);
+        
         for (const product of products) {
             const productRow = this.getProductRow({ name: product.name, price: product.price, category: product.category });
-            if (await productRow.count() === 0) {
-                throw new Error(`Product not found in cart: ${JSON.stringify(product)}`);
-            }
             const nameLocator = this.cartProducts.name(productRow);
             await BaseVerification.verifyText(nameLocator, product.name, options);
             const priceLocator = this.cartProducts.price(productRow);
@@ -154,21 +161,20 @@ export class CartPage extends BasePage {
                 await BaseVerification.verifyText(categoryLocator, product.category, options);
             }
 
-            const priceText = await priceLocator.innerText();
-            const expectedPrice = this.parsePrice(priceText);
-            const expectedTotal = expectedPrice.value * product.quantity;
+            const expectedTotal = this.calTotalPrice(product);
             const totalLocator = this.cartProducts.total(productRow);
             const totalText = await totalLocator.innerText();
-            const actualTotalParse = this.parsePrice(totalText);
-            const expectFn = BaseVerification.getExpect(options.soft);
-            const priceValueErrMsg = `Expected total for product "${product.name}" to be "${expectedTotal}", but found "${actualTotalParse.value}"`;
-            await BaseVerification.expectWithLog(() => expectFn(actualTotalParse.value, priceValueErrMsg).toEqual(expectedTotal), priceValueErrMsg);
-            const priceCurrencyErrMsg = `Expected currency for product "${product.name}" to be "${expectedPrice.currency}", but found "${actualTotalParse.currency}"`;
-            await BaseVerification.expectWithLog(() => expectFn(actualTotalParse.currency, priceCurrencyErrMsg).toEqual(expectedPrice.currency), priceCurrencyErrMsg);
+            const actualTotal = this.parsePrice(totalText);
+            const totalErrMsg = `Expected total for product "${product.name}" to be "${expectedTotal.currency} ${expectedTotal.value}", but found "${actualTotal.currency} ${actualTotal.value}"`;
+            await BaseVerification.expectWithLog(() => expectFn(actualTotal, totalErrMsg).toEqual(expectedTotal), totalErrMsg);
+            // const priceValueErrMsg = `Expected total for product "${product.name}" to be "${expectedTotal.value}", but found "${actualTotalParse.value}"`;
+            // await BaseVerification.expectWithLog(() => expectFn(actualTotalParse.value, priceValueErrMsg).toEqual(expectedTotal.value), priceValueErrMsg);
+            // const priceCurrencyErrMsg = `Expected currency for product "${product.name}" to be "${expectedTotal.currency}", but found "${actualTotalParse.currency}"`;
+            // await BaseVerification.expectWithLog(() => expectFn(actualTotalParse.currency, priceCurrencyErrMsg).toEqual(expectedTotal.currency), priceCurrencyErrMsg);
         }
     }
 
-    parsePrice(priceText: string): {currency: string, value: number} {
+    parsePrice(priceText: string): ParsedPrice {
         const match = priceText.match(/^\s*(\D+)\s*([\d,.]+)\s*$/);
         if (!match) {
             throw new Error(`Invalid price format: ${priceText}`);
@@ -178,9 +184,32 @@ export class CartPage extends BasePage {
         return { currency, value };
     }
 
+    calTotalPrice(products: CartProduct): ParsedPrice {
+        const priceText = products.price;
+        const quantity = products.quantity;
+        const price = this.parsePrice(priceText);
+        const total = price.value * quantity;
+        return {
+            currency: price.currency,
+            value: total
+        }
+    }
+
     @step("Verify cart is empty")
     async verifyCartIsEmpty(options: VerificationOptions = {}) {
         await BaseVerification.verifyText(this.empty.message, this.EMPTY_CART_MESSAGE, options);
         await BaseVerification.verifyElementIsHidden(this.cartInfoTable, options);
     }
+
+    @step("Verify cart is not empty")
+    async verifyCartIsNotEmpty(options: VerificationOptions = {}) {
+        await BaseVerification.verifyElementIsHidden(this.empty.message, options);
+        await BaseVerification.verifyElementIsVisible(this.cartInfoTable, options);
+        await BaseVerification.verifyText(this.cartInfoTableHeaders.item, this.TABLE_HEADERS.ITEM, options);
+        await BaseVerification.verifyText(this.cartInfoTableHeaders.description, this.TABLE_HEADERS.DESCRIPTION, options);
+        await BaseVerification.verifyText(this.cartInfoTableHeaders.price, this.TABLE_HEADERS.PRICE, options);
+        await BaseVerification.verifyText(this.cartInfoTableHeaders.quantity, this.TABLE_HEADERS.QUANTITY, options);
+        await BaseVerification.verifyText(this.cartInfoTableHeaders.total, this.TABLE_HEADERS.TOTAL, options);
+    }
+
 }

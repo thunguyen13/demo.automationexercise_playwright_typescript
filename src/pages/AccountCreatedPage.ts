@@ -5,7 +5,7 @@ import { step } from "@utils/logger";
 
 
 export class AccountCreatedPage extends BasePage {
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
     }
     
