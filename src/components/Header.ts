@@ -6,7 +6,7 @@ import { step } from "@utils/logger";
 
 
 export class Header extends BaseComponent {
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
     }
 

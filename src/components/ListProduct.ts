@@ -30,7 +30,7 @@ export type BrandName = (typeof BRANDS)[number];
 
 export class ListProduct extends BaseComponent{
     public readonly cartModal: CartModal;
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
         this.cartModal = new CartModal(this.page);
     }

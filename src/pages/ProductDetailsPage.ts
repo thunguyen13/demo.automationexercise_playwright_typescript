@@ -14,7 +14,7 @@ export type ProductDescription = {
 
 export class ProductDetailsPage extends BasePage {
     public readonly cartModal: CartModal;
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
         this.cartModal = new CartModal(this.page);
     }

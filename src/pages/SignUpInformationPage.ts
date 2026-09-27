@@ -34,7 +34,7 @@ export const errorFields = ["email", "password","zipcode", "mobile_number"] as c
 type ErrorFields = typeof errorFields[number];
 
 export class SignUpInformationPage extends BasePage {
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
     }
 

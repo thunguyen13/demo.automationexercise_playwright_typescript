@@ -23,7 +23,7 @@ export type ParsedPrice = {
 }
 
 export class CartPage extends BasePage {
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
     }
 

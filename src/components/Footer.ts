@@ -4,7 +4,7 @@ import { Page } from "@playwright/test";
 
 
 export class Footer extends BaseComponent {
-    constructor(protected page: Page) {
+    constructor(page: Page) {
         super(page);
     }
 
