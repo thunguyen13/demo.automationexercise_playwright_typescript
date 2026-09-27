@@ -2,6 +2,7 @@ import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification
 import { Locator, Page } from "@playwright/test";
 import { step } from "@utils/logger";
 import { CartModal } from "./CartModal";
+import { BaseComponent } from "@core/ui/BaseComponent";
 
 export type CardIdentifier = { index: number, name?: never } | { index?: never, name: string };
 export type CardInfo = {
@@ -27,9 +28,10 @@ export type SubCategory = (typeof CATEGORIES)[keyof typeof CATEGORIES][number];
 export const BRANDS = ["Polo", "H&M", "Madame", "Mast & Harbour", "Babyhug", "Allen Solly Junior", "Kookie Kids", "Biba"] as const;
 export type BrandName = (typeof BRANDS)[number];
 
-export class ListProduct {
+export class ListProduct extends BaseComponent{
     public readonly cartModal: CartModal;
-    constructor(private page: Page) {
+    constructor(protected page: Page) {
+        super(page);
         this.cartModal = new CartModal(this.page);
     }
 
@@ -78,7 +80,12 @@ export class ListProduct {
     async clickAddToCartButton(identifier: CardIdentifier) {
         const card = this.getProductCard(identifier);
         await card.hover();
-        await this.productCardOverlay.addToCartButton(card).click();
+        await Promise.all([
+            this.page.waitForResponse(
+                response => response.url().includes("/add_to_cart")
+            ),
+            this.productCardOverlay.addToCartButton(card).click()
+        ])
     }
 
     @step("Clicking the 'View Product' button for the product card with '{0}'")
@@ -129,11 +136,6 @@ export class ListProduct {
             productInfoList.push(cardInfo);
         }
         return productInfoList;
-    }
-
-    @step("Waiting for the page to become ready")
-    async waitForReady() {
-        await this.page.waitForLoadState('load');
     }
     
     @step("Filtering by main category '{0}' and subcategory '{1}'")

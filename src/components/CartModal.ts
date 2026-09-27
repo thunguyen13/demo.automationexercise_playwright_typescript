@@ -1,10 +1,13 @@
+import { BaseComponent } from "@core/ui/BaseComponent";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
 
-export class CartModal {
-    constructor(private page: Page) {}
+export class CartModal extends BaseComponent {
+    constructor(protected page: Page) {
+        super(page);
+    }
 
     /* ** SELECTORS ** */
     private readonly cartModal = this.page.locator('div[id="cartModal"]');
@@ -23,6 +26,7 @@ export class CartModal {
     @step("Clicking the 'View Cart' button from the cart modal")
     async clickViewCart() {
         await this.cartModalContent.viewCartButton.click();
+        await this.waitForReady()
     }
     
     @step("Clicking the 'Continue Shopping' button from the cart modal")

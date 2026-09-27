@@ -1,11 +1,14 @@
+import { BaseComponent } from "@core/ui/BaseComponent";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
 
 
-export class Header {
-    constructor(private page: Page) {}
+export class Header extends BaseComponent {
+    constructor(protected page: Page) {
+        super(page);
+    }
 
     private readonly header = this.page.locator("#header");
     private readonly logo = this.header.getByAltText("Website for automation practice");
@@ -35,6 +38,7 @@ export class Header {
     @step("Clicking on the menu item: '{0}'")
     async clickMenuItem(item: keyof typeof this.menuItems) {
         await this.menuItems[item].click();
+        await this.waitForReady();
     }
 
     /**

@@ -64,10 +64,15 @@ export class ProductDetailsPage extends BasePage {
         }
     }
 
-    @step("Adding product to cart with quantity '{1}'")
+    @step("Adding product to cart with quantity '{0}'")
     async addProductToCart(quantity: number = 1) {
         await this.productDetails.quantityInput.fill(quantity.toString());
-        await this.productDetails.addToCartButton.click();
+        await Promise.all([
+            this.page.waitForResponse(
+                response => response.url().includes("/add_to_cart")
+            ),
+            this.productDetails.addToCartButton.click()
+        ])
     }
 
     /* ** VERIFICATION METHODS ** */
