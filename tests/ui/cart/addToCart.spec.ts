@@ -31,7 +31,7 @@ test.describe("Add product to cart", () => {
 
     test("Verify add product to cart from product page", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
@@ -49,7 +49,7 @@ test.describe("Add product to cart", () => {
         ]
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickViewCart();
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.verifyProductsInCart(addedProduct);
     });
 
@@ -103,7 +103,7 @@ test.describe("Add product to cart", () => {
 
     test("Verify add product after filter by category", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
@@ -125,13 +125,13 @@ test.describe("Add product to cart", () => {
         ];
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickContinueShopping();
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.verifyProductsInCart(addedProduct);
     });
 
     test("Verify add product after filter by brand", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
@@ -151,7 +151,7 @@ test.describe("Add product to cart", () => {
         ];
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickContinueShopping();
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.verifyProductsInCart(addedProduct);
     });
 }); 
@@ -159,7 +159,7 @@ test.describe("Add product to cart", () => {
 test.describe("Add multiple products to cart", () => {
     test("Verify add multiple products to cart from product page", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
@@ -176,13 +176,13 @@ test.describe("Add multiple products to cart", () => {
                         quantity: 1
                     }
                 });
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.verifyProductsInCart(productInfo);
     });
 
     test("Verify add multiple products to cart from product details page", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
@@ -204,7 +204,7 @@ test.describe("Add multiple products to cart", () => {
             await cartModal.clickContinueShopping();
             await productDetailsPage.goBack();
         }
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.verifyProductsInCart(productInfo);
     });
 });

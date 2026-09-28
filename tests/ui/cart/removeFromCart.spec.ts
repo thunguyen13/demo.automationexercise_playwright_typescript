@@ -29,7 +29,7 @@ test.describe("Remove From Cart", () => {
     
     test("Should remove a product and keep other products", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
@@ -47,7 +47,7 @@ test.describe("Remove From Cart", () => {
             await listProduct.clickAddToCartButton({ index });
             await cartModal.clickContinueShopping();
         }
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.deleteProducts([addedProduct[1]]);
         await cartPage.verifyProductsInCart([addedProduct[0], addedProduct[2]]);
         await cartPage.deleteProducts([addedProduct[0]]);
@@ -79,7 +79,7 @@ test.describe("Remove From Cart", () => {
     
     test("Should remove all products", async ({ page }) => {
         const productPage = new ProductPage(page);
-        const productPageHeader = productPage.header;
+        const header = productPage.header;
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
@@ -98,7 +98,7 @@ test.describe("Remove From Cart", () => {
             await listProduct.clickAddToCartButton({ index });
             await cartModal.clickContinueShopping();
         }
-        await productPageHeader.clickMenuItem("cart");
+        await header.clickMenuItem("cart");
         await cartPage.deleteProducts(addedProduct);
         await cartPage.verifyCartIsEmpty();
     });    
