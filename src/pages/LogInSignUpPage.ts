@@ -4,7 +4,7 @@ import { Page } from "@playwright/test";
 import { step } from "@utils/logger";
 
 
-export class LogInPage extends BasePage {
+export class LogInSignUpPage extends BasePage {
     constructor(page: Page) {
         super(page);
     }

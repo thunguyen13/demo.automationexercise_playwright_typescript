@@ -1,4 +1,4 @@
-import { LogInPage } from "@pages/LogInSignUpPage";
+import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 import { test } from "@fixtures/ui/common";
 import { validAccInfo } from "@data/ui/account";
 import { BaseValidator } from "@core/api/BaseValidator";
@@ -18,7 +18,7 @@ test.beforeAll(async ({ authService }) => {
 
 test.describe("Logout", () => {
     test.beforeEach(async ({ page }) => {
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
         const homePage = new HomePage(page);
         await logInSignUpPage.navigateTo("login");
         await logInSignUpPage.login(validEmail, validPassword);
@@ -26,7 +26,7 @@ test.describe("Logout", () => {
     });
     test("Should logout successfully", async ({ page }) => {
         const homePage = new HomePage(page);
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
 
         await homePage.header.clickMenuItem("logOut");
         await logInSignUpPage.verifyCurrentPage();
@@ -35,7 +35,7 @@ test.describe("Logout", () => {
     });
     test("Should logout cross-tab successfully", async ({ page, context }) => {
         const homePage = new HomePage(page);
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
 
         console.log(`[Action] Opening a new tab with logged in user`);
         const newTab = await context.newPage();

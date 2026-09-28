@@ -1,4 +1,4 @@
-import { LogInPage } from "@pages/LogInSignUpPage";
+import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 import { SignUpInformationPage } from "@pages/SignUpInformationPage";
 import { test } from "@fixtures/ui/common";
 import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_misingFieldData, validAccInfo } from "@data/ui/account";
@@ -13,7 +13,7 @@ const validName = getRequiredField(validAccInfo, "name");
 
 test.describe("Registration flow with valid data", () => {
     test("Should register successfully and navigate to account created page", async ({ page, trackUserForCleanup }) => {
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
         const accountCreatedPage = new AccountCreatedPage(page);
         const homePage = new HomePage(page);
@@ -31,7 +31,7 @@ test.describe("Registration flow with valid data", () => {
 
 test.describe("Account information form auto-filling and disabling", () => {
     test("Should auto-filled name field in information form based on name provided in signup form", async ({ page }) => {
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
 
         await logInSignUpPage.navigateTo("signup");
@@ -39,7 +39,7 @@ test.describe("Account information form auto-filling and disabling", () => {
         await signUpInformationPage.verifyAutoFilledData("name", validName);
     });
     test("Should auto-filled and disabled email field in information form based on email provided in signup form", async ({ page }) => {
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
 
         await logInSignUpPage.navigateTo("signup");
@@ -56,7 +56,7 @@ test.describe("Registration flow with empty required fields", () => {
             const expectedFieldError = getRequiredField(testCase, "expectedFieldError");
             const signupData = getRequiredField(testCase, "data");
 
-            const logInSignUpPage = new LogInPage(page);
+            const logInSignUpPage = new LogInSignUpPage(page);
             const signUpInformationPage = new SignUpInformationPage(page);
             
             const name = signupData.name ?? "";
@@ -98,7 +98,7 @@ test.describe("Registration flow with existing email", () => {
     test("Should display error message when email is existing", async ({ page }) => {
         const errorMessage = getRequiredField(invalidRegisterData_duplicateEmail, "errorMessage");
 
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
 
         console.log(`Testing registration API with duplicate email: ${email}`);
         await logInSignUpPage.navigateTo("signup");
@@ -116,7 +116,7 @@ test.describe("Registration flow with invalid form data", () => {
             const data = getRequiredField(testCase, "data");
             const errorMessage = testCase.errorMessage;
 
-            const logInSignUpPage = new LogInPage(page);
+            const logInSignUpPage = new LogInSignUpPage(page);
             const signUpInformationPage = new SignUpInformationPage(page);
 
             const signupData = data;
