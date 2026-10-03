@@ -1,3 +1,4 @@
+import { CheckoutModal } from "@components/CheckoutModal";
 import { BasePage } from "@core/ui/BasePage";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
 import { Locator, Page } from "@playwright/test";
@@ -23,12 +24,14 @@ export type ParsedPrice = {
 }
 
 export class CartPage extends BasePage {
+    public readonly checkoutModal: CheckoutModal;
     constructor(page: Page) {
         super(page);
+        this.checkoutModal = new CheckoutModal(this.page);
     }
 
     /* ** SELECTORS ** */
-    private readonly proceedToCheckoutButton = this.page.getByRole('link', { name: 'Proceed To Checkout' });
+    private readonly proceedToCheckoutButton = this.page.locator("a[class*='check_out']");
     private readonly container = this.page.locator("#cart_info");
     private readonly empty = {
         message: this.container.locator('span[id="empty_cart"]'),

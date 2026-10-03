@@ -1,4 +1,4 @@
-import { LogInPage } from "@pages/LogInSignUpPage";
+import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 import { test } from "@fixtures/ui/common";
 import { invalidLoginData, validAccInfo } from "@data/ui/account";
 import { BaseValidator } from "@core/api/BaseValidator";
@@ -18,7 +18,7 @@ test.beforeAll(async ({ authService }) => {
 
 test.describe("Success Login with valid credentials", () => {
     test("Should login successfully", async ({ page }) => {
-        const logInSignUpPage = new LogInPage(page);
+        const logInSignUpPage = new LogInSignUpPage(page);
         const homePage = new HomePage(page);
 
         await logInSignUpPage.navigateTo("login");
@@ -34,7 +34,7 @@ test.describe("Login unsuccessfully with invalid credentials", () => {
             const expectedFieldError = testCase.expectedFieldError;
             const errorMessage = testCase.errorMessage;
 
-            const logInSignUpPage = new LogInPage(page);
+            const logInSignUpPage = new LogInSignUpPage(page);
             const homePage = new HomePage(page);
 
             await logInSignUpPage.navigateTo("login");
