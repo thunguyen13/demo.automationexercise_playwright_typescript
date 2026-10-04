@@ -16,7 +16,7 @@ test.beforeAll(async ({ authService }) => {
     console.log(`[SETUP] Created test user with email: ${validEmail} for registration tests.`);
 });
 
-test.describe.only("Success Login with valid credentials", () => {
+test.describe("Success Login with valid credentials", () => {
     test("Should login successfully", async ({ page }) => {
         const logInSignUpPage = new LogInSignUpPage(page);
         const homePage = new HomePage(page);
