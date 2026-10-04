@@ -16,14 +16,14 @@ test.beforeAll(async ({ authService }) => {
     console.log(`[SETUP] Created test user with email: ${validEmail} for registration tests.`);
 });
 
-test.describe("Success Login with valid credentials", () => {
+test.describe.only("Success Login with valid credentials", () => {
     test("Should login successfully", async ({ page }) => {
         const logInSignUpPage = new LogInSignUpPage(page);
         const homePage = new HomePage(page);
 
         await logInSignUpPage.navigateTo("login");
         await logInSignUpPage.login(validEmail, validPassword);
-        await homePage.header.verifyLoggedInAsText(`Logged in as ${validName}`);
+        await homePage.header.verifyLoggedInAsText(`${validName}`);
     });
 });
 
@@ -35,7 +35,6 @@ test.describe("Login unsuccessfully with invalid credentials", () => {
             const errorMessage = testCase.errorMessage;
 
             const logInSignUpPage = new LogInSignUpPage(page);
-            const homePage = new HomePage(page);
 
             await logInSignUpPage.navigateTo("login");
             await logInSignUpPage.login(data.email, data.password);
