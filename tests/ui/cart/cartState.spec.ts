@@ -3,10 +3,14 @@ import { validAccInfo } from "@data/ui/account";
 import { test } from "@fixtures/ui/common";
 import { AccountCreatedPage } from "@pages/AccountCreatedPage";
 import { CartPage, CartProduct } from "@pages/CartPage";
+import { CheckoutPage } from "@pages/CheckoutPage";
 import { LogInSignUpPage } from "@pages/LogInSignUpPage";
+import { ProductDetailsPage } from "@pages/ProductDetailsPage";
 import { ProductPage } from "@pages/ProductPage";
 import { SignUpInformationPage } from "@pages/SignUpInformationPage";
 import { getRandomIndexList, getRandomInt } from '@utils/helpers';
+
+const userInfo = validAccInfo;
 
 test.describe("Cart After Register", () => {
     test("Verify cart after successful registration", async ({ page, preparedCartProducts, trackUserForCleanup }) => {
@@ -16,10 +20,10 @@ test.describe("Cart After Register", () => {
         const signUpInformationPage = new SignUpInformationPage(page);
         const accountCreatedPage = new AccountCreatedPage(page);
         const header = accountCreatedPage.header;
-        const userInfo = validAccInfo;
-        userInfo.email = getRandomInt(0, 10) + userInfo.email;
+        userInfo.email = getRandomInt(0, 9) + userInfo.email;
 
         await cartPage.navigateTo();
+        await cartPage.verifyProductsInCart(preparedCartProducts);
         await cartPage.clickProceedToCheckoutButton();
         await checkoutModal.clickRegisterLogin();
         await registerPage.signup(userInfo.name, userInfo.email);
@@ -27,11 +31,9 @@ test.describe("Cart After Register", () => {
         await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         await signUpInformationPage.submitInformationForm();
         await accountCreatedPage.verifyCurrentPage();
-
         await header.clickMenuItem("cart");
+        
         await cartPage.verifyProductsInCart(preparedCartProducts);
-
-        await header.clickMenuItem("deleteAccount");
     });
 
     test("Verify cart after unsuccessful registration", async ({ page, preparedCartProducts, trackUserForCleanup }) => {
@@ -40,15 +42,16 @@ test.describe("Cart After Register", () => {
         const registerPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
         const header = signUpInformationPage.header;
-        const name = "Test User";
-        const email = getRandomInt(11, 20) + validAccInfo.email;
+        userInfo.email = getRandomInt(0, 9) + userInfo.email;
 
         await cartPage.navigateTo();
+        await cartPage.verifyProductsInCart(preparedCartProducts);
         await cartPage.clickProceedToCheckoutButton();
         await checkoutModal.clickRegisterLogin();
-        await registerPage.signup(name, email);
-        await trackUserForCleanup({ email: email, password: "" });
+        await registerPage.signup(userInfo.name, userInfo.email);
+        await trackUserForCleanup({ email: userInfo.email, password: "" });
         await signUpInformationPage.submitInformationForm();
+        await signUpInformationPage.verifyCurrentPage();
         await header.clickMenuItem("cart");
         
         await cartPage.verifyProductsInCart(preparedCartProducts);
@@ -56,9 +59,8 @@ test.describe("Cart After Register", () => {
 });
 
 test.describe("Cart After Login", () => {
-    const userInfo = validAccInfo;
     test.beforeAll(async ({ authService }) => {
-        userInfo.email = getRandomInt(21, 30) + userInfo.email;
+        userInfo.email = getRandomInt(0, 9) + userInfo.email;
         console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
@@ -72,9 +74,11 @@ test.describe("Cart After Login", () => {
         const header = cartPage.header;
 
         await cartPage.navigateTo();
+        await cartPage.verifyProductsInCart(preparedCartProducts);
         await cartPage.clickProceedToCheckoutButton();
         await checkoutModal.clickRegisterLogin();
         await loginPage.login(userInfo.email, userInfo.password);
+        await header.verifyLoggedInAsText(userInfo.name);
         await header.clickMenuItem("cart");
 
         await cartPage.verifyProductsInCart(preparedCartProducts);
@@ -85,9 +89,10 @@ test.describe("Cart After Login", () => {
         const checkoutModal = cartPage.checkoutModal;
         const loginPage = new LogInSignUpPage(page);
         const header = cartPage.header;
-        const invalidEmail = getRandomInt(31, 40) + userInfo.email;
+        const invalidEmail = getRandomInt(10, 19) + userInfo.email;
 
         await cartPage.navigateTo();
+        await cartPage.verifyProductsInCart(preparedCartProducts);
         await cartPage.clickProceedToCheckoutButton();
         await checkoutModal.clickRegisterLogin();
         await loginPage.login(invalidEmail, userInfo.password);
@@ -111,13 +116,13 @@ test.describe("Cart After Login", () => {
 });
 
 test.describe("Cart After Logout", () => {
-    const userInfo = validAccInfo;
-    test.beforeEach(async ({ authService, page }) => {
-        userInfo.email = getRandomInt(41, 50) + userInfo.email;
+    test.beforeEach(async ({ authService, page, trackUserForCleanup }) => {
+        userInfo.email = getRandomInt(0, 9) + userInfo.email;
         console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
@@ -134,7 +139,6 @@ test.describe("Cart After Logout", () => {
         await cartPage.navigateTo();
         await cartPage.verifyProductsInCart(preparedCartProducts);
         await header.clickMenuItem("logOut");
-
         await header.verifyItemIsHidden("logOut");
         await header.clickMenuItem("cart");
 
@@ -149,53 +153,44 @@ test.describe("Cart After Logout", () => {
         await cartPage.navigateTo();
         await cartPage.verifyProductsInCart(preparedCartProducts);
         await header.clickMenuItem("logOut");
-
         await header.verifyItemIsHidden("logOut");
         await header.clickMenuItem("cart");
         await cartPage.verifyCartIsEmpty();
-
         await header.clickMenuItem("signUpLogIn");
         await loginPage.login(userInfo.email, userInfo.password);
-
-        await header.verifyItemIsVisible("logOut");
+        await header.verifyLoggedInAsText(userInfo.name);
         await header.clickMenuItem("cart");
 
         await cartPage.verifyProductsInCart(preparedCartProducts);
     });
-
-    test.afterEach(async ({ authService }) => {
-        console.log("[AFTER ALL HOOK] Attempting to delete test user for login tests: " + userInfo.email);
-        const payload = {
-            email: userInfo.email,
-            password: userInfo.password,
-        };
-        const res = await authService.deleteAccount(payload);
-        console.log(
-            `[TEARDOWN] Deleted test user for login tests: ${userInfo.email}. Response code: ${res.body.responseCode}`
-        );
-    });
 });
 
 test.describe("Cart After Login With Account Has Products In Cart", () => {
-    const userInfo = validAccInfo;
     const addedProducts: CartProduct[] = [];
 
-    test.beforeEach(async ({ authService, page }) => {
-        userInfo.email = getRandomInt(51, 60) + userInfo.email;
-        console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
+    test.beforeEach(async ({ authService, trackUserForCleanup }) => {
+        userInfo.email = getRandomInt(0, 9) + userInfo.email;
+        console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+    });
 
+    test("Verify cart after successful login including products added with and without login", async ({ page }) => {
         const loginPage = new LogInSignUpPage(page);
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
+        const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
-        const header = cartPage.header;
+        const checkoutModal = cartPage.checkoutModal;
+        const header = loginPage.header;
 
+        // Login and add products to cart
         await loginPage.navigateTo();
         await loginPage.login(userInfo.email, userInfo.password);
+        await header.verifyLoggedInAsText(userInfo.name);
         await header.clickMenuItem("products");
         const productsCardCount = await listProduct.getProductCardCount();
         const randomIndexes = getRandomIndexList(productsCardCount, 2);
@@ -212,23 +207,32 @@ test.describe("Cart After Login With Account Has Products In Cart", () => {
         await cartPage.verifyProductsInCart(addedProducts);
         await header.clickMenuItem("logOut");
         await header.verifyItemIsHidden("logOut");
-    });
 
-    test("Verify cart after successful login including products added with and without login", async ({ page, preparedCartProducts }) => {
-        const cartPage = new CartPage(page);
-        const checkoutModal = cartPage.checkoutModal;
-        const loginPage = new LogInSignUpPage(page);
-        const header = loginPage.header;
-        const products = [...addedProducts, ...preparedCartProducts];
+        // Add product to cart after logout
+        await productPage.navigateTo();
+        const randomInt = getRandomInt(0, productsCardCount - 1);
+        await listProduct.clickViewProductButton({ index: randomInt });
+        const productDetails = [
+            {
+                ...(await productDetailsPage.getProductDetails()),
+                quantity: 1
+            }
+        ]
+        await productDetailsPage.addProductToCart(1);
+        await cartModal.clickViewCart();
+        
+        await cartPage.verifyProductsInCart(productDetails);
 
-        await cartPage.navigateTo();
-        await cartPage.clickProceedToCheckoutButton();
-        await checkoutModal.clickRegisterLogin();
+        // Login again and verify cart has all products
+        await header.clickMenuItem("signUpLogIn");
         await loginPage.login(userInfo.email, userInfo.password);
+        await header.verifyLoggedInAsText(userInfo.name);
         await header.clickMenuItem("cart");
 
+        const products = [...addedProducts, ...productDetails];
         await cartPage.verifyProductsInCart(products);
 
+        // Logout and login again to verify cart still has all products
         await header.clickMenuItem("logOut");
         await header.verifyItemIsHidden("logOut");
         await header.clickMenuItem("signUpLogIn");
@@ -237,16 +241,37 @@ test.describe("Cart After Login With Account Has Products In Cart", () => {
 
         await cartPage.verifyProductsInCart(products);
     });
+});
 
-    test.afterEach(async ({ authService }) => {
-        console.log("[AFTER ALL HOOK] Attempting to delete test user for login tests: " + userInfo.email);
-        const payload = {
-            email: userInfo.email,
-            password: userInfo.password,
-        };
-        const res = await authService.deleteAccount(payload);
-        console.log(
-            `[TEARDOWN] Deleted test user for login tests: ${userInfo.email}. Response code: ${res.body.responseCode}`
-        );
+test.describe("Cart After Back From Checkout", () => {
+    test.beforeEach(async ({ authService, page, trackUserForCleanup }) => {
+        userInfo.email = getRandomInt(0, 9) + userInfo.email;
+
+        console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
+        const res = await authService.createAccount(userInfo);
+        BaseValidator.validateStatusCode(res, 200);
+        console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+
+        const loginPage = new LogInSignUpPage(page);
+        const header = loginPage.header;
+        
+        await loginPage.navigateTo();
+        await loginPage.login(userInfo.email, userInfo.password);
+        await header.verifyLoggedInAsText(userInfo.name);
+    });
+
+    test("Verify cart after back from checkout", async ({ page, preparedCartProducts }) => {
+        const cartPage = new CartPage(page);
+        const checkoutPage = new CheckoutPage(page);
+
+        await cartPage.navigateTo();
+        await cartPage.verifyProductsInCart(preparedCartProducts);
+
+        await cartPage.clickProceedToCheckoutButton();
+        await checkoutPage.verifyCurrentPage();
+        await checkoutPage.goBack();
+
+        await cartPage.verifyProductsInCart(preparedCartProducts);
     });
 });

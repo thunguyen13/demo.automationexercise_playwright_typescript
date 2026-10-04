@@ -13,7 +13,7 @@ export class CheckoutPage extends BasePage {
     private readonly proceedToCheckoutButton = this.page.locator("a[class*='check_out']");
     private readonly container = {
         cartInfo: this.page.locator("#cart_info"),
-        checkoutInfo: this.page.getByTestId("checkout_info"),
+        checkoutInfo: this.page.getByTestId("checkout-info"),
     }
     private readonly heading = this.page.locator('h2[class="heading"]');
     private readonly breadcrumb = this.page.locator('ol[class="breadcrumb"] li[class="active"]');
