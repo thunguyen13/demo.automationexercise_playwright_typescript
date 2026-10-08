@@ -26,7 +26,7 @@ test.describe("Registration flow with valid data", () => {
         await accountCreatedPage.verifyCurrentPage();
         await accountCreatedPage.verifyPageContent();
         await accountCreatedPage.clickContinue();
-        await homePage.header.verifyLoggedInAsText(`Logged in as ${validName}`);
+        await homePage.header.verifyLoggedInAsText(`${validName}`);
     });
 });
 

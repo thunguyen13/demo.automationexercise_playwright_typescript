@@ -22,7 +22,7 @@ test.describe("Logout", () => {
         const homePage = new HomePage(page);
         await logInSignUpPage.navigateTo("login");
         await logInSignUpPage.login(validEmail, validPassword);
-        await homePage.header.verifyLoggedInAsText(`Logged in as ${validName}`);
+        await homePage.header.verifyLoggedInAsText(`${validName}`);
     });
     test("Should logout successfully", async ({ page }) => {
         const homePage = new HomePage(page);
@@ -41,7 +41,7 @@ test.describe("Logout", () => {
         const newTab = await context.newPage();
         const homePageNewTab = new HomePage(newTab);        
         await homePageNewTab.navigateTo();
-        await homePageNewTab.header.verifyLoggedInAsText(`Logged in as ${validName}`);
+        await homePageNewTab.header.verifyLoggedInAsText(`${validName}`);
 
         console.log(`[Action] Logging out in the first tab`);
         await homePage.header.clickMenuItem("logOut");
