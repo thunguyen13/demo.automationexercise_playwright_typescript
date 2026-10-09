@@ -48,8 +48,6 @@ export class CartPage extends BasePage {
     }
     private readonly cartInfoTableRows = this.cartInfoTable.locator('tbody tr');
     private readonly cartProducts = {
-        // item: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_product"]'),
-        // description: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_description"]'),
         image: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_product"] img'),
         name: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_description"] h4 a'),
         category: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_description"] p'),
@@ -170,10 +168,6 @@ export class CartPage extends BasePage {
             const actualTotal = this.parsePrice(totalText);
             const totalErrMsg = `Expected total for product "${product.name}" to be "${expectedTotal.currency} ${expectedTotal.value}", but found "${actualTotal.currency} ${actualTotal.value}"`;
             await BaseVerification.expectWithLog(() => expectFn(actualTotal, totalErrMsg).toEqual(expectedTotal), totalErrMsg);
-            // const priceValueErrMsg = `Expected total for product "${product.name}" to be "${expectedTotal.value}", but found "${actualTotalParse.value}"`;
-            // await BaseVerification.expectWithLog(() => expectFn(actualTotalParse.value, priceValueErrMsg).toEqual(expectedTotal.value), priceValueErrMsg);
-            // const priceCurrencyErrMsg = `Expected currency for product "${product.name}" to be "${expectedTotal.currency}", but found "${actualTotalParse.currency}"`;
-            // await BaseVerification.expectWithLog(() => expectFn(actualTotalParse.currency, priceCurrencyErrMsg).toEqual(expectedTotal.currency), priceCurrencyErrMsg);
         }
     }
 

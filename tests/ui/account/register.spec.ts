@@ -23,9 +23,10 @@ test.describe("Registration flow with valid data", () => {
         await signUpInformationPage.fillInformationForm(validAccInfo);
         await signUpInformationPage.submitInformationForm();
         await trackUserForCleanup({ email: validEmail, password: validPassword });
+        await accountCreatedPage.verifyCurrentPage();
         await accountCreatedPage.verifyPageContent();
         await accountCreatedPage.clickContinue();
-        await homePage.header.verifyLoggedInAsText(`Logged in as ${validName}`);
+        await homePage.header.verifyLoggedInAsText(`${validName}`);
     });
 });
 

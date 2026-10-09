@@ -18,7 +18,7 @@ export class AccountCreatedPage extends BasePage {
     private readonly continueButton = this.container.getByTestId("continue-button");
 
     /* ** CONSTANTS ** */
-    public readonly PAGE_URL = "/account-created";
+    public readonly PAGE_URL = "/account_created";
     public readonly PAGE_TITLE = "Automation Exercise - Account Created";
     public readonly HEADER = "Account Created!";
     public readonly MESSAGES = [

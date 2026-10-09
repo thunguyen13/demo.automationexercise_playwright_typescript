@@ -23,6 +23,7 @@ export class Header extends BaseComponent {
         loggedInAs: this.header.getByRole("listitem").filter({ hasText: "Logged in as" }),
     }
 
+    public readonly loggedInAsText = "Logged in as";
     /**
      * Click on the logo in the header
      */
@@ -58,11 +59,12 @@ export class Header extends BaseComponent {
 
     /**
      * Verify that the "Logged in as" menu item contains the expected text
-     * @param expectedText - The expected text to verify in the "Logged in as" menu item.
+     * @param expectedUserName - The expected text to verify in the "Logged in as" menu item.
      * @param options - Optional parameters for verification
      */
     @step("Verifying that the menu item: '{0}' is not visible")
-    async verifyLoggedInAsText(expectedText: string, options: VerificationOptions = {}) {
+    async verifyLoggedInAsText(expectedUserName: string, options: VerificationOptions = {}) {
+        const expectedText = `${this.loggedInAsText} ${expectedUserName}`;
         await BaseVerification.verifyText(this.menuItems.loggedInAs, expectedText, options);
     }
 

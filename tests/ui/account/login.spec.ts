@@ -23,7 +23,7 @@ test.describe("Success Login with valid credentials", () => {
 
         await logInSignUpPage.navigateTo("login");
         await logInSignUpPage.login(validEmail, validPassword);
-        await homePage.header.verifyLoggedInAsText(`Logged in as ${validName}`);
+        await homePage.header.verifyLoggedInAsText(`${validName}`);
     });
 });
 
@@ -35,7 +35,6 @@ test.describe("Login unsuccessfully with invalid credentials", () => {
             const errorMessage = testCase.errorMessage;
 
             const logInSignUpPage = new LogInSignUpPage(page);
-            const homePage = new HomePage(page);
 
             await logInSignUpPage.navigateTo("login");
             await logInSignUpPage.login(data.email, data.password);
