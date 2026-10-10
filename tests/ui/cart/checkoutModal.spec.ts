@@ -6,6 +6,7 @@ import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 test.describe("Checkout Modal", () => {
     test("Verify display of checkout modal and functionality of 'Continue On Cart' button", async ({ page, preparedCartProducts }) => {
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
         const checkoutModal = cartPage.checkoutModal;
         const header = cartPage.header;
 
@@ -16,11 +17,12 @@ test.describe("Checkout Modal", () => {
         await checkoutModal.verifycheckoutModalIsHidden();
         await header.verifyItemIsSelected("cart");
         await cartPage.verifyCurrentPage();
-        await cartPage.verifyProductsInCart(preparedCartProducts);
+        await cartTable.verifyProductsInCart(preparedCartProducts);
     });
 
     test("Verify display of checkout modal and functionality of 'Register / Login' button", async ({ page, preparedCartProducts }) => {
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
         const checkoutModal = cartPage.checkoutModal;
         const loginPage = new LogInSignUpPage(page);
         const header = cartPage.header;
@@ -33,6 +35,6 @@ test.describe("Checkout Modal", () => {
         await header.verifyItemIsSelected("signUpLogIn");
         await loginPage.verifyCurrentPage();
         await header.clickMenuItem("cart");
-        await cartPage.verifyProductsInCart(preparedCartProducts);
+        await cartTable.verifyProductsInCart(preparedCartProducts);
     });
 });
