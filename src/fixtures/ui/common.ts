@@ -1,5 +1,5 @@
+import { CartProduct } from "@components/CartTable";
 import { test as apiTest } from "@fixtures/api/account";
-import { CartProduct } from "@pages/CartPage";
 import { HomePage } from "@pages/HomePage";
 import { ProductDetailsPage } from "@pages/ProductDetailsPage";
 import { test as base, expect, mergeTests } from "@playwright/test";

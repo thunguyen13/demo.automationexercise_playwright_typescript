@@ -1,4 +1,4 @@
-import { CartProduct, CartTable } from "@components/CartTable";
+import { CartTable, ProductRowIdentifier } from "@components/CartTable";
 import { CheckoutModal } from "@components/CheckoutModal";
 import { BasePage } from "@core/ui/BasePage";
 import { BaseVerification, VerificationOptions } from "@core/ui/BaseVerification";
@@ -21,7 +21,8 @@ export class CartPage extends BasePage {
         message: this.container.locator('span[id="empty_cart"]'),
         hereButton: this.container.getByRole('link', { name: 'here' }),
     }
-    
+    private readonly deleteButton = (row?: Locator) => (row ?? this.container).locator('td[class="cart_delete"] a');
+
     private readonly breadcrumb = this.page.locator('ol[class="breadcrumb"] li[class="active"]');
 
     /* ** CONSTANTS ** */
@@ -45,6 +46,19 @@ export class CartPage extends BasePage {
     @step("Clicking on 'Proceed To Checkout' button")
     async clickProceedToCheckoutButton() {
         await this.proceedToCheckoutButton.click();
+    }
+
+    @step("Deleting product(s) from cart: {0}")
+    async deleteProducts(products: ProductRowIdentifier[]) {
+        for (const product of products) {
+            const row = this.cartTable.getProductRow(product);
+            await Promise.all([
+                this.page.waitForResponse(
+                    response => response.url().includes("/delete_cart")
+                ),
+                this.deleteButton(row).click()
+            ])
+        }
     }
 
     /* ** VERIFICATION METHODS ** */
