@@ -30,7 +30,7 @@ export const requiredFields = ["email", "name", "password", "firstname", "lastna
 type RequiredFields = typeof requiredFields[number];
 export const autoFilledFields = ["name", "email"] as const satisfies readonly (keyof UserInfo)[];
 type AutoFilledFields = typeof autoFilledFields[number];
-export const errorFields = ["email", "password","zipcode", "mobile_number"] as const satisfies readonly (keyof UserInfo)[];
+export const errorFields = ["email", "password", "zipcode", "mobile_number"] as const satisfies readonly (keyof UserInfo)[];
 type ErrorFields = typeof errorFields[number];
 
 export class SignUpInformationPage extends BasePage {

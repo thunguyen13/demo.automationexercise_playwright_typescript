@@ -25,7 +25,7 @@ test.describe("Remove From Cart", () => {
         ]
         await listProduct.clickAddToCartButton({ index: randomIndex });
         await cartModal.clickViewCart();
-        await cartTable.deleteProducts(addedProduct);
+        await cartPage.deleteProducts(addedProduct);
         await cartPage.verifyCartIsEmpty();
     });
     
@@ -51,9 +51,9 @@ test.describe("Remove From Cart", () => {
             await cartModal.clickContinueShopping();
         }
         await header.clickMenuItem("cart");
-        await cartTable.deleteProducts([addedProduct[1]]);
+        await cartPage.deleteProducts([addedProduct[1]]);
         await cartTable.verifyProductsInCart([addedProduct[0], addedProduct[2]]);
-        await cartTable.deleteProducts([addedProduct[0]]);
+        await cartPage.deleteProducts([addedProduct[0]]);
         await cartTable.verifyProductsInCart([addedProduct[2]]);
     });
     
@@ -77,7 +77,7 @@ test.describe("Remove From Cart", () => {
         ];
         await listProduct.clickAddToCartButton({ index: randomIndex });
         await cartModal.clickViewCart();
-        await cartTable.deleteProducts(addedProduct);
+        await cartPage.deleteProducts(addedProduct);
         await cartPage.verifyCartIsEmpty();
     });
     
@@ -104,7 +104,7 @@ test.describe("Remove From Cart", () => {
             await cartModal.clickContinueShopping();
         }
         await header.clickMenuItem("cart");
-        await cartTable.deleteProducts(addedProduct);
+        await cartPage.deleteProducts(addedProduct);
         await cartPage.verifyCartIsEmpty();
     });    
 })

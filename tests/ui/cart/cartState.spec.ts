@@ -1,5 +1,4 @@
 import { CartProduct } from '@components/CartTable';
-import { CartModal } from './../../../src/components/CartModal';
 import { BaseValidator } from "@core/api/BaseValidator";
 import { validAccInfo } from "@data/ui/account";
 import { test } from "@fixtures/ui/common";
@@ -10,9 +9,9 @@ import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 import { ProductDetailsPage } from "@pages/ProductDetailsPage";
 import { ProductPage } from "@pages/ProductPage";
 import { SignUpInformationPage } from "@pages/SignUpInformationPage";
+import { UserInfo } from '@services/AuthService';
+import { buildUserData, generateUniqueEmailAndName } from '@utils/dataHelpers';
 import { getRandomIndexList, getRandomInt } from '@utils/helpers';
-
-const userInfo = validAccInfo;
 
 test.describe("Cart After Register", () => {
     test("Verify cart after successful registration", async ({ page, preparedCartProducts, trackUserForCleanup }) => {
@@ -23,7 +22,9 @@ test.describe("Cart After Register", () => {
         const signUpInformationPage = new SignUpInformationPage(page);
         const accountCreatedPage = new AccountCreatedPage(page);
         const header = accountCreatedPage.header;
-        userInfo.email = getRandomInt(0, 9) + userInfo.email;
+        const userInfo = buildUserData(validAccInfo, {
+            overrides: generateUniqueEmailAndName()
+        }) as UserInfo;
 
         await cartPage.navigateTo();
         await cartTable.verifyProductsInCart(preparedCartProducts);
@@ -46,7 +47,9 @@ test.describe("Cart After Register", () => {
         const registerPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
         const header = signUpInformationPage.header;
-        userInfo.email = getRandomInt(0, 9) + userInfo.email;
+        const userInfo = buildUserData(validAccInfo, {
+            overrides: generateUniqueEmailAndName()
+        }) as UserInfo;
 
         await cartPage.navigateTo();
         await cartTable.verifyProductsInCart(preparedCartProducts);
@@ -63,8 +66,10 @@ test.describe("Cart After Register", () => {
 });
 
 test.describe("Cart After Login", () => {
+    const userInfo = buildUserData(validAccInfo, {
+        overrides: generateUniqueEmailAndName()
+    }) as UserInfo;
     test.beforeAll(async ({ authService }) => {
-        userInfo.email = getRandomInt(0, 9) + userInfo.email;
         console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
@@ -122,19 +127,22 @@ test.describe("Cart After Login", () => {
 });
 
 test.describe("Cart After Logout", () => {
+    const userInfo = buildUserData(validAccInfo, {
+        overrides: generateUniqueEmailAndName()
+    }) as UserInfo;
     test.beforeEach(async ({ authService, page, trackUserForCleanup }) => {
-        userInfo.email = getRandomInt(0, 9) + userInfo.email;
         console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
+        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
         
         await loginPage.navigateTo();
         await loginPage.login(userInfo.email, userInfo.password);
+        await header.verifyLoggedInAsText(userInfo.name);
         await header.verifyItemIsVisible("logOut");
     });
 
@@ -176,8 +184,11 @@ test.describe("Cart After Logout", () => {
 test.describe("Cart After Login With Account Has Products In Cart", () => {
     const addedProducts: CartProduct[] = [];
 
+    const userInfo = buildUserData(validAccInfo, {
+        overrides: generateUniqueEmailAndName()
+    }) as UserInfo;
+
     test.beforeEach(async ({ authService, trackUserForCleanup }) => {
-        userInfo.email = getRandomInt(0, 9) + userInfo.email;
         console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
@@ -252,9 +263,10 @@ test.describe("Cart After Login With Account Has Products In Cart", () => {
 });
 
 test.describe("Cart After Back From Checkout", () => {
+    const userInfo = buildUserData(validAccInfo, {
+        overrides: generateUniqueEmailAndName()
+    }) as UserInfo;
     test.beforeEach(async ({ authService, page, trackUserForCleanup }) => {
-        userInfo.email = getRandomInt(0, 9) + userInfo.email;
-
         console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
