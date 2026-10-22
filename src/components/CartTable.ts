@@ -51,7 +51,11 @@ export class CartTable extends BaseComponent {
             price: this.cartInfoTable.locator('thead td[class="price"]'),
             total: this.cartInfoTable.locator('thead td[class="total"]'),
         }
-        this.cartInfoTableRows = this.cartInfoTable.locator('tbody tr');
+        this.cartInfoTableRows = 
+            this.cartInfoTable.locator('tbody tr')
+                .filter({
+                    hasNotText: 'Total Amount'
+                });
         this.cartProducts = {
             image: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_product"] img'),
             name: (row?: Locator) => (row ?? this.cartInfoTableRows).locator('td[class="cart_description"] h4 a'),
