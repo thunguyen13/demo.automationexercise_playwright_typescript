@@ -1,6 +1,7 @@
+import { CartProduct } from "@components/CartTable";
 import { filterBrand, filterCategory, productData } from "@data/ui/product";
 import { test } from "@fixtures/ui/common";
-import { CartPage, CartProduct } from "@pages/CartPage";
+import { CartPage } from "@pages/CartPage";
 import { HomePage } from "@pages/HomePage";
 import { ProductDetailsPage } from "@pages/ProductDetailsPage";
 import { ProductPage } from "@pages/ProductPage";
@@ -13,6 +14,7 @@ test.describe("Add product to cart", () => {
         const listProduct = homePage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await homePage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -26,7 +28,7 @@ test.describe("Add product to cart", () => {
         ]
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickViewCart();
-        await cartPage.verifyProductsInCart(addedProduct);
+        await cartTable.verifyProductsInCart(addedProduct);
     });
 
     test("Verify add product to cart from product page", async ({ page }) => {
@@ -36,6 +38,7 @@ test.describe("Add product to cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -50,7 +53,7 @@ test.describe("Add product to cart", () => {
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickViewCart();
         await header.clickMenuItem("cart");
-        await cartPage.verifyProductsInCart(addedProduct);
+        await cartTable.verifyProductsInCart(addedProduct);
     });
 
     test("Verify add product to cart from product details page", async ({ page }) => {
@@ -59,6 +62,7 @@ test.describe("Add product to cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -74,7 +78,7 @@ test.describe("Add product to cart", () => {
         ];
         await productDetailsPage.addProductToCart(quantity);
         await cartModal.clickViewCart();
-        await cartPage.verifyProductsInCart(addedProduct);
+        await cartTable.verifyProductsInCart(addedProduct);
     });
 
     test("Verify add product after search", async ({ page }) => {
@@ -83,6 +87,7 @@ test.describe("Add product to cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         const searchedKeyword = "white";
@@ -98,7 +103,7 @@ test.describe("Add product to cart", () => {
         ];
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickViewCart();
-        await cartPage.verifyProductsInCart(addedProduct);
+        await cartTable.verifyProductsInCart(addedProduct);
     });
 
     test("Verify add product after filter by category", async ({ page }) => {
@@ -107,6 +112,7 @@ test.describe("Add product to cart", () => {
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         const randomIndexCategory = getRandomInt(0, filterCategory.length - 2);
@@ -126,7 +132,7 @@ test.describe("Add product to cart", () => {
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickContinueShopping();
         await header.clickMenuItem("cart");
-        await cartPage.verifyProductsInCart(addedProduct);
+        await cartTable.verifyProductsInCart(addedProduct);
     });
 
     test("Verify add product after filter by brand", async ({ page }) => {
@@ -135,6 +141,7 @@ test.describe("Add product to cart", () => {
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         const randomIndexBrand = getRandomInt(0, filterBrand.length - 2);
@@ -152,7 +159,7 @@ test.describe("Add product to cart", () => {
         await listProduct.clickAddToCartButton({index: randomIndex});
         await cartModal.clickContinueShopping();
         await header.clickMenuItem("cart");
-        await cartPage.verifyProductsInCart(addedProduct);
+        await cartTable.verifyProductsInCart(addedProduct);
     });
 }); 
 
@@ -164,6 +171,7 @@ test.describe("Add multiple products to cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         for (const product of productData) {
@@ -177,7 +185,7 @@ test.describe("Add multiple products to cart", () => {
                     }
                 });
         await header.clickMenuItem("cart");
-        await cartPage.verifyProductsInCart(productInfo);
+        await cartTable.verifyProductsInCart(productInfo);
     });
 
     test("Verify add multiple products to cart from product details page", async ({ page }) => {
@@ -187,6 +195,7 @@ test.describe("Add multiple products to cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
 
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -205,7 +214,7 @@ test.describe("Add multiple products to cart", () => {
             await productDetailsPage.goBack();
         }
         await header.clickMenuItem("cart");
-        await cartPage.verifyProductsInCart(productInfo);
+        await cartTable.verifyProductsInCart(productInfo);
     });
 });
 

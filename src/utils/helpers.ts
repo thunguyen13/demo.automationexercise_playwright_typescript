@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 
 /**
  * To get the current date and time in the format "dd-mm-yyyy_HH-MM-SS" for the Vietnam timezone (Asia/Ho_Chi_Minh)
@@ -130,4 +129,19 @@ export function getRandomInt(min: number, max: number): number {
         throw new Error("Minimum value cannot be greater than maximum value.");
     }
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export type ParsedPrice = {
+    currency: string;
+    value: number;
+}
+
+export function parsePrice(priceText: string): ParsedPrice {
+    const match = priceText.match(/^\s*(\D+)\s*([\d,.]+)\s*$/);
+    if (!match) {
+        throw new Error(`Invalid price format: ${priceText}`);
+    }
+    const [, currency, valueText] = match;
+    const value = Number(valueText.replace(/,./g, ''));
+    return { currency, value };
 }

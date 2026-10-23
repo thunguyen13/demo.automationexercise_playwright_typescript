@@ -1,5 +1,5 @@
 import { test } from "@fixtures/ui/common";
-import { CartPage, CartProduct } from "@pages/CartPage";
+import { CartPage } from "@pages/CartPage";
 import { ProductPage } from "@pages/ProductPage";
 
 test.describe("Cart empty state", () => {

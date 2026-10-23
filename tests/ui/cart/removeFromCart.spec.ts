@@ -1,5 +1,6 @@
+import { CartProduct } from "@components/CartTable";
 import { test } from "@fixtures/ui/common";
-import { CartPage, CartProduct } from "@pages/CartPage";
+import { CartPage } from "@pages/CartPage";
 import { ProductDetailsPage } from "@pages/ProductDetailsPage";
 import { ProductPage } from "@pages/ProductPage";
 import { getRandomIndexList, getRandomInt } from '@utils/helpers';
@@ -10,6 +11,7 @@ test.describe("Remove From Cart", () => {
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
     
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -33,6 +35,7 @@ test.describe("Remove From Cart", () => {
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
     
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -49,9 +52,9 @@ test.describe("Remove From Cart", () => {
         }
         await header.clickMenuItem("cart");
         await cartPage.deleteProducts([addedProduct[1]]);
-        await cartPage.verifyProductsInCart([addedProduct[0], addedProduct[2]]);
+        await cartTable.verifyProductsInCart([addedProduct[0], addedProduct[2]]);
         await cartPage.deleteProducts([addedProduct[0]]);
-        await cartPage.verifyProductsInCart([addedProduct[2]]);
+        await cartTable.verifyProductsInCart([addedProduct[2]]);
     });
     
     test("Should remove product with multiple quantities", async ({ page }) => {
@@ -60,6 +63,7 @@ test.describe("Remove From Cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
     
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
@@ -84,6 +88,7 @@ test.describe("Remove From Cart", () => {
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
+        const cartTable = cartPage.cartTable;
     
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();

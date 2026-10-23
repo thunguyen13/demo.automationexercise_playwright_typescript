@@ -27,11 +27,12 @@ import { UserInfo } from "@services/AuthService";
 // }
 
 export const requiredFields = ["email", "name", "password", "firstname", "lastname", "address1", "country", "state", "city", "zipcode", "mobile_number"] as const satisfies readonly (keyof UserInfo)[];
-type RequiredFields = typeof requiredFields[number];
+export type RequiredFields = typeof requiredFields[number];
 export const autoFilledFields = ["name", "email"] as const satisfies readonly (keyof UserInfo)[];
 type AutoFilledFields = typeof autoFilledFields[number];
-export const errorFields = ["email", "password","zipcode", "mobile_number"] as const satisfies readonly (keyof UserInfo)[];
+export const errorFields = ["email", "password", "zipcode", "mobile_number"] as const satisfies readonly (keyof UserInfo)[];
 type ErrorFields = typeof errorFields[number];
+export const countryOptions = ["India", "United States", "Canada", "Australia", "Israel", "New Zealand", "Singapore"];
 
 export class SignUpInformationPage extends BasePage {
     constructor(page: Page) {
@@ -113,20 +114,19 @@ export class SignUpInformationPage extends BasePage {
         if (accountInfo.address2 !== undefined)
             await this.informationForm.address2Field.fill(accountInfo.address2);
         if (accountInfo.country !== undefined) {
-            const countryOptions = ["India", "United States", "Canada", "Australia", "Israel", "New Zealand", "Singapore"];
-            let counttyOption;
+            let countryOption;
             if (typeof accountInfo.country === "number") {
                 if (accountInfo.country < 0 || accountInfo.country >= countryOptions.length) {
                     throw new Error(`Invalid country index: ${accountInfo.country}. Valid range is 0 to ${countryOptions.length - 1}.`);
                 }
-                counttyOption = countryOptions[accountInfo.country];
+                countryOption = countryOptions[accountInfo.country];
             } else {
                 if (!countryOptions.includes(accountInfo.country)) {
                     throw new Error(`Invalid country name: ${accountInfo.country}. Valid options are: ${countryOptions.join(", ")}.`);
                 }
-                counttyOption = accountInfo.country;
+                countryOption = accountInfo.country;
             }
-            await this.informationForm.countryDropdown.selectOption(counttyOption);
+            await this.informationForm.countryDropdown.selectOption(countryOption);
         }
         if (accountInfo.state !== undefined)
             await this.informationForm.stateField.fill(accountInfo.state);
