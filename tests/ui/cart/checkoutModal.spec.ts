@@ -49,10 +49,10 @@ test.describe("No Checkout Modal Displayed for Logged-in Users", () => {
         overrides: generateUniqueEmailAndName()
     }) as UserInfo;
     
-    test.beforeEach(async ({ authService, page, trackUserForCleanup }) => {
+    test.beforeEach(async ({ authService, trackUserForCleanup }) => {
         console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
     });

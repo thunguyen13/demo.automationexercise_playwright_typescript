@@ -35,7 +35,7 @@ export const validAccInfo: UserInfo = {
   offers: true,
 };
 
-export const invalidRegisterData_misingFieldData: Array<Case> = [
+export const invalidRegisterData_missingFieldData: Array<Case> = [
   {
     name: "Email field is empty",
     screen: 1,

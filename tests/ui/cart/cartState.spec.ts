@@ -32,7 +32,7 @@ test.describe("Cart After Register", () => {
         await checkoutModal.clickRegisterLogin();
         await registerPage.signup(userInfo.name, userInfo.email);
         await signUpInformationPage.fillInformationForm(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         await signUpInformationPage.submitInformationForm();
         await accountCreatedPage.verifyCurrentPage();
         await header.clickMenuItem("cart");
@@ -56,7 +56,7 @@ test.describe("Cart After Register", () => {
         await cartPage.clickProceedToCheckoutButton();
         await checkoutModal.clickRegisterLogin();
         await registerPage.signup(userInfo.name, userInfo.email);
-        await trackUserForCleanup({ email: userInfo.email, password: "" });
+        trackUserForCleanup({ email: userInfo.email, password: "" });
         await signUpInformationPage.submitInformationForm();
         await signUpInformationPage.verifyCurrentPage();
         await header.clickMenuItem("cart");
@@ -133,7 +133,7 @@ test.describe("Cart After Logout", () => {
     test.beforeEach(async ({ authService, page, trackUserForCleanup }) => {
         console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
 
@@ -193,7 +193,7 @@ test.describe("Cart After Login With Account Has Products In Cart", () => {
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
     });
 
     test("Verify cart after successful login including products added with and without login", async ({ page }) => {
@@ -271,7 +271,7 @@ test.describe("Cart After Back From Checkout", () => {
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;

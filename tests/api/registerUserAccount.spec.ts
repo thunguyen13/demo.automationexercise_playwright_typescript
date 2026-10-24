@@ -19,7 +19,7 @@ test.describe('Register Success', () => {
             console.log(`Testing registration API with payload data: ${JSON.stringify(data.payloadData)}`);
             const response = await authService.createAccount(data.payloadData);
             // Register for cleanup
-            await trackUserForCleanup({
+            trackUserForCleanup({
                 email: data.payloadData.email!,
                 password: data.payloadData.password!,
             });
@@ -37,7 +37,7 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
             console.log(`Testing registration API with payload data: ${JSON.stringify(data.payloadData)}`);
             const response = await authService.createAccount(data.payloadData);
             // Check if account was created and register for cleanup
-            await trackUserForCleanUpIfCreated(
+            trackUserForCleanUpIfCreated(
                 response, 
                 {
                     email: data.payloadData.email!,
@@ -56,7 +56,7 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
             console.log(`Testing registration API with payload data: ${JSON.stringify(data.payloadData)}`);
             const response = await authService.createAccount(data.payloadData);
             // Check if account was created and register for cleanup
-            await trackUserForCleanUpIfCreated(
+            trackUserForCleanUpIfCreated(
                 response, 
                 {
                     email: data.payloadData.email!,
@@ -89,7 +89,7 @@ test.describe('Register Failure - Bad Request: Duplicate Email', () => {
             BaseValidator.validateErrorResponse(response, errorMsg);
         } finally {
             // Clean up the created user account after the test
-            await trackUserForCleanup({
+            trackUserForCleanup({
                 email: payloadData.email!,
                 password: payloadData.password!,
             });
@@ -108,7 +108,7 @@ test.describe('Register Unsupported HTTP Method', () => {
     test(`Should fail to register with unsupported HTTP method: GET`, async ({ apiClient, trackUserForCleanup }) => {
         console.log(`Testing registration API with unsupported HTTP method: GET and payload data: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.get(endpoint, payloadData);
-        await trackUserForCleanUpIfCreated(
+        trackUserForCleanUpIfCreated(
             response, 
             userAccount, 
             trackUserForCleanup
@@ -119,7 +119,7 @@ test.describe('Register Unsupported HTTP Method', () => {
     test(`Should fail to register with unsupported HTTP method: PUT`, async ({ apiClient, trackUserForCleanup }) => {
         console.log(`Testing registration API with unsupported HTTP method: GET and payload data: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.put(endpoint, payloadData);
-        await trackUserForCleanUpIfCreated(
+        trackUserForCleanUpIfCreated(
             response, 
             userAccount, 
             trackUserForCleanup
@@ -130,7 +130,7 @@ test.describe('Register Unsupported HTTP Method', () => {
     test(`Should fail to register with unsupported HTTP method: DELETE`, async ({ apiClient, trackUserForCleanup }) => {
         console.log(`Testing registration API with unsupported HTTP method: GET and payload data: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.delete(endpoint, payloadData);
-        await trackUserForCleanUpIfCreated(
+        trackUserForCleanUpIfCreated(
             response, 
             userAccount, 
             trackUserForCleanup
@@ -140,7 +140,7 @@ test.describe('Register Unsupported HTTP Method', () => {
     })
 });
 
-async function trackUserForCleanUpIfCreated(response: ApiResponse, account: { email: string, password: string }, trackUserForCleanup: (u: CleanUpUser) => Promise<void>) {
+function trackUserForCleanUpIfCreated(response: ApiResponse, account: { email: string, password: string }, trackUserForCleanup: (u: CleanUpUser) => void) {
     if (response.body == null) {
         throw new Error("[UNEXPECTED] Response body is null. Cannot determine if account was created. Email: " + account.email);
     }
@@ -150,7 +150,7 @@ async function trackUserForCleanUpIfCreated(response: ApiResponse, account: { em
         return;
     }
     console.log(`[UNEXPECTED] Registration succeeded. Add account to the cleanup queue by email: ${account.email}.`);
-    await trackUserForCleanup({
+    trackUserForCleanup({
         email: account.email,
         password: account.password,
     });

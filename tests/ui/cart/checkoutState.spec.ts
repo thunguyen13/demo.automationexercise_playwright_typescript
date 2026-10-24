@@ -19,7 +19,7 @@ test.describe("Address Details Verification - Full Infomation", () => {
     test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
         console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
 
@@ -69,7 +69,7 @@ test.describe("Address Details Verification - Only Required Infomation", () => {
     test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
         console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
 
@@ -114,7 +114,7 @@ test.describe("Order Verification", () => {
     test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
         console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
 
@@ -188,7 +188,7 @@ test.describe("Enable to Leave A Comment", () => {
     test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
         console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
         const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
 

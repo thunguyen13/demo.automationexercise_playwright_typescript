@@ -1,7 +1,7 @@
 import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 import { SignUpInformationPage } from "@pages/SignUpInformationPage";
 import { test } from "@fixtures/ui/common";
-import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_misingFieldData, validAccInfo } from "@data/ui/account";
+import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_missingFieldData, validAccInfo } from "@data/ui/account";
 import { AccountCreatedPage } from "@pages/AccountCreatedPage";
 import { BaseValidator } from "@core/api/BaseValidator";
 import { getRequiredField } from "@utils/helpers";
@@ -22,7 +22,7 @@ test.describe("Registration flow with valid data", () => {
         await logInSignUpPage.signup(validName, validEmail);
         await signUpInformationPage.fillInformationForm(validAccInfo);
         await signUpInformationPage.submitInformationForm();
-        await trackUserForCleanup({ email: validEmail, password: validPassword });
+        trackUserForCleanup({ email: validEmail, password: validPassword });
         await accountCreatedPage.verifyCurrentPage();
         await accountCreatedPage.verifyPageContent();
         await accountCreatedPage.clickContinue();
@@ -51,7 +51,7 @@ test.describe("Account information form auto-filling and disabling", () => {
 });
 
 test.describe("Registration flow with empty required fields", () => {
-    for (const testCase of invalidRegisterData_misingFieldData) {
+    for (const testCase of invalidRegisterData_missingFieldData) {
         test(`Should display validation when "${testCase.name}"`, async ({ page, trackUserForCleanup }) => {
             const screen = getRequiredField(testCase, "screen");
             const expectedFieldError = getRequiredField(testCase, "expectedFieldError");
@@ -71,10 +71,10 @@ test.describe("Registration flow with empty required fields", () => {
             } else if (screen === 2) {
                 await signUpInformationPage.fillInformationForm(signupData);
                 await signUpInformationPage.submitInformationForm();
-                await trackUserForCleanup({email: email, password: password});
+                trackUserForCleanup({email: email, password: password});
                 await signUpInformationPage.verifyFormFieldIsInvalid(expectedFieldError);
                 await signUpInformationPage.verifyCurrentPage();
-                await trackUserForCleanup({email: null, password: null});
+                trackUserForCleanup({email: null, password: null});
             }
         });
     }
@@ -90,7 +90,7 @@ test.describe("Registration flow with existing email", () => {
         const response = await authService.createAccount(accInfo);
         BaseValidator.validateFieldValue(response, "responseCode", 201);
         // Register for cleanup
-        await trackUserForCleanup({
+        trackUserForCleanup({
             email: email,
             password: password,
         });
@@ -135,10 +135,10 @@ test.describe("Registration flow with invalid form data", () => {
             } else if (screen === 2) {
                 await signUpInformationPage.fillInformationForm(signupData);
                 await signUpInformationPage.submitInformationForm();
-                await trackUserForCleanup({email: email, password: password});
+                trackUserForCleanup({email: email, password: password});
                 await signUpInformationPage.verifyErrorMessage(expectedFieldError, errorMessage);
                 await signUpInformationPage.verifyCurrentPage();
-                await trackUserForCleanup({email: null, password: null});
+                trackUserForCleanup({email: null, password: null});
             }
         })
     }

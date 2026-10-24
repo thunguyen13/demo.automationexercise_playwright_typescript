@@ -10,7 +10,7 @@ export type CleanUpUser = {
 interface Fixtures {
   apiClient: ApiClient;
   authService: AuthService;
-  trackUserForCleanup: (u: CleanUpUser) => Promise<void>;
+  trackUserForCleanup: (u: CleanUpUser) => void;
 };
 
 export const test = base.extend<Fixtures>({
@@ -31,8 +31,8 @@ export const test = base.extend<Fixtures>({
 
     console.log(`Worker index: ${testInfo.workerIndex}`);
 
-    await use(async (u: CleanUpUser) => {
-      user = u;
+    await use((u: CleanUpUser) => {
+        user = u;
     });
 
     console.log(`[FIXTURE - AFTER EACH HOOK] Attempting to delete test user.`);
