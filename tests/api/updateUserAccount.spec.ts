@@ -17,7 +17,8 @@ const unsupportedMethodMsg = `Method \"{method}\" not allowed.`;
 
 test.beforeAll(async ({ authService }, testInfo) => {
     console.log(`[BEFORE ALL HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-    await authService.createAccount(testUser);
+    const res = await authService.createAccount(testUser);
+    BaseValidator.validateFieldValue(res, "responseCode", 201);
     console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
 });
 

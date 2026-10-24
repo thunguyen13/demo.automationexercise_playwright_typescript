@@ -17,29 +17,21 @@ const unsupportedMethodMsg = `Method \"{method}\" not allowed.`;
 
 test.describe.configure({ mode: "parallel" });
 
-test.beforeEach(async ({ authService }, testInfo) => {
+test.beforeEach(async ({ authService, trackUserForCleanup }, testInfo) => {
   console.log(`[BEFORE EACH HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-  await authService.createAccount(testUser);
+  const res = await authService.createAccount(testUser);
+  trackUserForCleanup({email: testUser.email, password: testUser.password});
+  BaseValidator.validateFieldValue(res, "responseCode", 201);
   console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
 });
 
-test.afterEach(async ({ authService }) => {
-  console.log(`[AFTER EACH HOOK] Deleting test user.`);
-  const userIdentity: UserIdentity = {
-    email: testUser.email,
-    password: testUser.password,
-  };
-  const res= await authService.deleteAccount(userIdentity);
-  console.log(`[CLEAN UP] Aptempted to delete test user with email: ${testUser.email} and responseCode is: ${res.body.responseCode}`);
-});
-
 test.describe("Success Delete API", () => {
-  test("Should Verify delete success with valid credentials", async ({authService}) => {
+  test.only("Should Verify delete success with valid credentials", async ({authService}) => {
     const userIdentity: UserIdentity = {
       email: testUser.email,
       password: testUser.password,
     };
-    console.log(`Testing delete with valid credentials: email: ${userIdentity.email} and password: ${userIdentity.password}`);
+    console.log(`TESTING DELETE with valid credentials: email: ${userIdentity.email} and password: ${userIdentity.password}`);
     const response = await authService.deleteAccount(userIdentity);
     BaseValidator.validateStatusCode(response, successCode);
     BaseValidator.validateFieldValue(response, "responseCode", successCode);
@@ -53,7 +45,7 @@ test.describe("Failed Delete API", () => {
       const payloadData = {
         form: data.payloadData,
       };
-      console.log(`Testing delete with payload: ${JSON.stringify(payloadData.form)}`);
+      console.log(`TESTING DELETE with payload: ${JSON.stringify(payloadData.form)}`);
       const response = await apiClient.delete(endpoint, payloadData);
       const badRequestMsg = data.message?.replace("{method}", "DELETE") || defaultBadRequestMsg;
       BaseValidator.validateStatusCode(response, successCode);
@@ -66,7 +58,7 @@ test.describe("Failed Delete API", () => {
       const payloadData = {
         form: data.payloadData,
       };
-      console.log(`Testing delete with payload: ${JSON.stringify(payloadData.form)}`);
+      console.log(`TESTING DELETE with payload: ${JSON.stringify(payloadData.form)}`);
       const response = await apiClient.delete(endpoint, payloadData);
       BaseValidator.validateStatusCode(response, successCode);
       BaseValidator.validateFieldValue(response, "responseCode", notFoundCode);
@@ -83,18 +75,18 @@ test.describe("Verify API delete retrieves error message for unsupported HTTP me
     },
   };
   test("Should retrieve error message for unsupported HTTP method: GET", async ({apiClient}) => {
-    console.log(`Testing deleteAccount with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
+    console.log(`TESTING DELETE ACCOUNT with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
     const response = await apiClient.get(endpoint, payloadData);
     BaseValidator.validateStatusCode(response, unsupportedMethodCode);
     BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "GET"));
   });
   test("Should retrieve error message for unsupported HTTP method: PUT", async ({apiClient}) => {
-    console.log(`Testing deleteAccount with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.form)}`);
+    console.log(`TESTING DELETE ACCOUNT with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.form)}`);
     const response = await apiClient.put(endpoint, payloadData);
     BaseValidator.validateStatusCode(response, unsupportedMethodCode);
     BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "PUT"));});
   test("Should retrieve error message for unsupported HTTP method: POST", async ({apiClient}) => {
-    console.log(`Testing deleteAccount with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
+    console.log(`TESTING DELETE ACCOUNT with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
     const response = await apiClient.post(endpoint, payloadData);
     BaseValidator.validateStatusCode(response, unsupportedMethodCode);
     BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "POST")

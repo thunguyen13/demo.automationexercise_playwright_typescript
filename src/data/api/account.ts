@@ -1,3 +1,4 @@
+import { getEnv } from "@config/env.config";
 import { UserInfo } from "@services/AuthService";
 import { buildUserData, generateUniqueEmailAndName } from "@utils/dataHelpers";
 import { generateUniqueNumberString } from "@utils/helpers";
@@ -31,7 +32,7 @@ type TypeGetUserDetail = {
 
 export const validAccInfo: UserInfo = {
   email: `test_user_${randomString}@demo.abc`,
-  password: "123456",
+  password: getEnv("PASSWORD"), //"123456",
   name: `Test User - ${randomString}`,
   title: "Mr",
   birth_date: "1",

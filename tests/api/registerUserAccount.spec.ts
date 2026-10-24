@@ -73,27 +73,23 @@ test.describe('Register Failure - Bad Request: Missing/Invalid Field', () => {
 
 test.describe('Register Failure - Bad Request: Duplicate Email', () => {
     const payloadData = duplicateEmailRegisterData.payloadData;
-    test.beforeEach(async ({ authService }) => {
+    test.beforeEach(async ({ authService, trackUserForCleanup }) => {
         console.log(`[BEFORE EACH HOOK] Creating test user.`);
         const response = await authService.createAccount(payloadData);
+        trackUserForCleanup({
+            email: payloadData.email!,
+            password: payloadData.password!,
+        });
         BaseValidator.validateFieldValue(response, "responseCode", successCreatedCode);
         console.log(`[SETUP] Created test user with email: ${payloadData.email} for duplicate email registration test.`);
     });
-    test(`Should fail to register with: ${duplicateEmailRegisterData.case}`, async ({ authService, trackUserForCleanup }) => {
+    test(`Should fail to register with: ${duplicateEmailRegisterData.case}`, async ({ authService }) => {
         const errorMsg = duplicateEmailRegisterData.message || "Bad request, email already exists.";
         console.log(`Testing registration API with duplicate email payload data: ${JSON.stringify(payloadData)}`);
-        try {
-            const response = await authService.createAccount(payloadData);
-            BaseValidator.validateStatusCode(response, successCode);
-            BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
-            BaseValidator.validateErrorResponse(response, errorMsg);
-        } finally {
-            // Clean up the created user account after the test
-            trackUserForCleanup({
-                email: payloadData.email!,
-                password: payloadData.password!,
-            });
-        };
+        const response = await authService.createAccount(payloadData);
+        BaseValidator.validateStatusCode(response, successCode);
+        BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
+        BaseValidator.validateErrorResponse(response, errorMsg);
     });
 });
 

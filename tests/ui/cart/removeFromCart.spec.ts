@@ -11,7 +11,6 @@ test.describe("Remove From Cart", () => {
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
         const cartPage = new CartPage(page);
-        const cartTable = cartPage.cartTable;
     
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
