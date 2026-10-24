@@ -21,6 +21,7 @@ test.beforeAll(async ({ authService }, testInfo) => {
     const res = await authService.createAccount(testUser);
     BaseValidator.validateFieldValue(res, "responseCode", 201);
     console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}. Response code: ${res.body.responseCode}`);
+    console.log(`============================================================\n`);
 });
 
 test.describe("Verify Success Login API", () => {
@@ -29,7 +30,7 @@ test.describe("Verify Success Login API", () => {
             email: testUser.email,
             password: testUser.password
         };
-        console.log(`Testing login with valid credentials: email: ${userIdentity.email} and password: ${userIdentity.password}`);
+        console.log(`TESTING LOGIN with valid credentials: email: ${userIdentity.email} and password: ${userIdentity.password}`);
         const response = await authService.verifyLogin(userIdentity);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", successCode);
@@ -43,7 +44,7 @@ test.describe("Verify Failed Login API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing login with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING LOGIN with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.post(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", badRequestCode);
@@ -55,7 +56,7 @@ test.describe("Verify Failed Login API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing login with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING LOGIN with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.post(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", notFoundCode);
@@ -72,21 +73,21 @@ test.describe("Verify API Login retrieves error message for unsupported HTTP met
         }
     }
     test("Should retrieve error message for unsupported HTTP method: GET", async ({ apiClient }) => {
-        console.log(`Testing login with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING LOGIN with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.get(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
         BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: PUT", async ({ apiClient }) => {
-        console.log(`Testing login with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING LOGIN with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.put(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
         BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: DELETE", async ({ apiClient }) => {
-        console.log(`Testing login with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING LOGIN with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.delete(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
@@ -95,6 +96,7 @@ test.describe("Verify API Login retrieves error message for unsupported HTTP met
 });
 
 test.afterAll(async ({ authService }) => {
+    console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Deleting test user.`);
     const userIdentity: UserIdentity = {
         email: testUser.email,

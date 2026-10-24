@@ -22,6 +22,7 @@ test.describe("Address Details Verification - Full Infomation", () => {
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
@@ -72,6 +73,7 @@ test.describe("Address Details Verification - Only Required Infomation", () => {
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
@@ -117,6 +119,7 @@ test.describe("Order Verification", () => {
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
@@ -191,6 +194,7 @@ test.describe("Enable to Leave A Comment", () => {
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;

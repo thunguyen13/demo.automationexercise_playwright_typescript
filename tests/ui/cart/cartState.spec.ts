@@ -74,6 +74,7 @@ test.describe("Cart After Login", () => {
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
     });
 
     test("Verify cart after successful login", async ({ page, preparedCartProducts }) => {
@@ -114,6 +115,7 @@ test.describe("Cart After Login", () => {
     });
 
     test.afterAll(async ({ authService }) => {
+        console.log(`\n============================================================`);
         console.log("[AFTER ALL HOOK] Attempting to delete test user for login tests: " + userInfo.email);
         const payload = {
             email: userInfo.email,
@@ -136,6 +138,7 @@ test.describe("Cart After Logout", () => {
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
@@ -193,6 +196,7 @@ test.describe("Cart After Login With Account Has Products In Cart", () => {
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
     });
 
@@ -271,6 +275,7 @@ test.describe("Cart After Back From Checkout", () => {
         const res = await authService.createAccount(userInfo);
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
 
         const loginPage = new LogInSignUpPage(page);

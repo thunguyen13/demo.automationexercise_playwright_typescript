@@ -20,13 +20,14 @@ test.beforeAll(async ({ authService }, testInfo) => {
     const res = await authService.createAccount(testUser);
     BaseValidator.validateFieldValue(res, "responseCode", 201);
     console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
+    console.log(`============================================================\n`);
 });
 
 test.describe("Verify Success Update API", () => {
     for (const data of successUpdateData) {
         test(`Should Verify update success with: ${data.case}`,async ({ authService }) => {
             const updateData = data.payloadData;
-            console.log(`Testing update with payload: ${JSON.stringify(updateData)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(updateData)}`);
             const response = await authService.updateAccount(updateData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", successCode);
@@ -41,7 +42,7 @@ test.describe("Verify Failed Update API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing update with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.put(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || badRequestCode);
@@ -53,7 +54,7 @@ test.describe("Verify Failed Update API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing update with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.put(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || notFoundCode);
@@ -65,7 +66,7 @@ test.describe("Verify Failed Update API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing update with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.put(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || badRequestCode);
@@ -83,19 +84,19 @@ test.describe("Verify API Update retrieves error message for unsupported HTTP me
         }
     }
     test("Should retrieve error message for unsupported HTTP method: GET", async ({ apiClient }) => {
-        console.log(`Testing update with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING UPDATE ACCOUNT with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.get(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, unsupportedMethodCode);
         BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "GET"));
     });
     test("Should retrieve error message for unsupported HTTP method: POST", async ({ apiClient }) => {
-        console.log(`Testing update with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING UPDATE ACCOUNT with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.post(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, unsupportedMethodCode);
         BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "POST"));
     });
     test("Should retrieve error message for unsupported HTTP method: DELETE", async ({ apiClient }) => {
-        console.log(`Testing update with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING UPDATE ACCOUNT with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.delete(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, unsupportedMethodCode);
         BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "DELETE"));
@@ -103,6 +104,7 @@ test.describe("Verify API Update retrieves error message for unsupported HTTP me
 });
 
 test.afterAll(async ({ authService }) => {
+    console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Deleting test user.`);
     const userIdentity: UserIdentity = {
         email: testUser.email,

@@ -14,6 +14,7 @@ test.beforeAll(async ({ authService }) => {
     const response = await authService.createAccount(validAccInfo);
     BaseValidator.validateFieldValue(response, "responseCode", 201);
     console.log(`[SETUP] Created test user with email: ${validEmail} for registration tests.`);
+    console.log(`============================================================\n`);
 });
 
 test.describe("Logout", () => {
@@ -55,6 +56,7 @@ test.describe("Logout", () => {
 });
 
 test.afterAll(async ({ authService }) => {
+    console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Attempting to delete test user: ${validEmail}`);
     const payload = {
         email: validEmail,

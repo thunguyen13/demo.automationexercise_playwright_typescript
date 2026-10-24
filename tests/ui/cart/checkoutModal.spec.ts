@@ -55,6 +55,7 @@ test.describe("No Checkout Modal Displayed for Logged-in Users", () => {
         trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
         BaseValidator.validateStatusCode(res, 200);
         console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+        console.log(`============================================================\n`);
     });
 
     test("Verify that logged-in users do not see the checkout modal", async ({ page, preparedCartProducts,  }) => {
