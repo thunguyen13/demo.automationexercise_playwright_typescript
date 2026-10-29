@@ -17,20 +17,11 @@ const unsupportedMethodMsg = `Method \"{method}\" not allowed.`;
 
 test.describe.configure({ mode: "parallel" });
 
-test.beforeEach(async ({ authService, trackUserForCleanup }, testInfo) => {
-  console.log(`[BEFORE EACH HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-  const res = await authService.createAccount(testUser);
-  trackUserForCleanup({email: testUser.email, password: testUser.password});
-  BaseValidator.validateFieldValue(res, "responseCode", 201);
-  console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
-  console.log(`============================================================\n`);
-});
-
 test.describe("Success Delete API", () => {
-  test("Should Verify delete success with valid credentials", async ({authService}) => {
+  test("Should Verify delete success with valid credentials", async ({ authService, createdUser}) => {
     const userIdentity: UserIdentity = {
-      email: testUser.email,
-      password: testUser.password,
+      email: createdUser.email,
+      password: createdUser.password
     };
     console.log(`TESTING DELETE ACCOUNT with valid credentials: email: ${userIdentity.email} and password: ${userIdentity.password}`);
     const response = await authService.deleteAccount(userIdentity);
@@ -41,8 +32,12 @@ test.describe("Success Delete API", () => {
 });
 
 test.describe("Failed Delete API", () => {
+  test.beforeEach(async ({ createUser }, testInfo) => {
+    console.log(`[BEFORE EACH HOOK] Creating test user account. Worker index: ${testInfo.workerIndex}`);
+    await createUser(testUser);
+  });
   for (const data of badRequestData) {
-    test(`Should retrieve error message for missing field(s): ${data.case}`, async ({apiClient}) => {
+    test(`Should retrieve error message for missing field(s): ${data.case}`, async ({ apiClient }) => {
       const payloadData = {
         form: data.payloadData,
       };
@@ -69,24 +64,28 @@ test.describe("Failed Delete API", () => {
 });
 
 test.describe("Verify API delete retrieves error message for unsupported HTTP method", () => {
+  test.beforeEach(async ({ createUser }, testInfo) => {
+    console.log(`[BEFORE EACH HOOK] Creating test user account. Worker index: ${testInfo.workerIndex}`);
+    await createUser(testUser);
+  });
   const payloadData = {
     form: {
       email: testUser.email,
       password: testUser.password,
     },
   };
-  test("Should retrieve error message for unsupported HTTP method: GET", async ({apiClient}) => {
+  test("Should retrieve error message for unsupported HTTP method: GET", async ({ apiClient }) => {
     console.log(`TESTING DELETE ACCOUNT ACCOUNT with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
     const response = await apiClient.get(endpoint, payloadData);
     BaseValidator.validateStatusCode(response, unsupportedMethodCode);
     BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "GET"));
   });
-  test("Should retrieve error message for unsupported HTTP method: PUT", async ({apiClient}) => {
+  test("Should retrieve error message for unsupported HTTP method: PUT", async ({ apiClient }) => {
     console.log(`TESTING DELETE ACCOUNT ACCOUNT with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.form)}`);
     const response = await apiClient.put(endpoint, payloadData);
     BaseValidator.validateStatusCode(response, unsupportedMethodCode);
     BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "PUT"));});
-  test("Should retrieve error message for unsupported HTTP method: POST", async ({apiClient}) => {
+  test("Should retrieve error message for unsupported HTTP method: POST", async ({ apiClient }) => {
     console.log(`TESTING DELETE ACCOUNT ACCOUNT with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
     const response = await apiClient.post(endpoint, payloadData);
     BaseValidator.validateStatusCode(response, unsupportedMethodCode);

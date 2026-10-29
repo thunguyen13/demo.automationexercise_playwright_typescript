@@ -9,6 +9,8 @@ const validEmail = getRequiredField(validAccInfo, "email");
 const validPassword = getRequiredField(validAccInfo, "password");
 const validName = getRequiredField(validAccInfo, "name");
 
+test.describe.configure({ mode: "parallel" });
+
 test.beforeAll(async ({ authService }) => {
     console.log(`[BEFORE ALL HOOK] Creating test user: ${validEmail}`);
     const response = await authService.createAccount(validAccInfo);

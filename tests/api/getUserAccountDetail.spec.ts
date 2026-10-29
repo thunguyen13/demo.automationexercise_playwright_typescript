@@ -23,11 +23,11 @@ test.beforeAll(async ({ authService }, testInfo) => {
 });
 
 test.describe("Success Get User Detail By Email API", () => {
-    test("Should get user detail by email successfully",async ({ authService }) => {
+    test("Should get user detail by email successfully", async ({ authService }) => {
         const email = testUser.email;
         const userDetail: Partial<UserInfo>= { ...testUser };
         delete userDetail.password;
-        console.log(`Testing get user detail by email: ${email}`);
+        console.log(`TESTING GET USER DETAILS by email: ${email}`);
         const response = await authService.getUserDetailByEmail({ email });
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateSchema(response, userDetailSchema, { soft: true });
@@ -82,7 +82,7 @@ test.describe("Verify API Get User Detail retrieves error message for unsupporte
 
 test.afterAll(async ({ authService }) => {
     console.log(`\n============================================================`);
-    console.log(`[AFTER ALL HOOK] Deleting test user.`);
+    console.log(`[AFTER ALL HOOK] Deleting test user account.`);
     const userIdentity: UserIdentity = {
         email: testUser.email,
         password: testUser.password
