@@ -1,6 +1,6 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { test } from "@fixtures/api/account";
-import { UserIdentity, UserInfo } from "@services/AuthService";
+import { UserInfo } from "@services/AuthService";
 import { validAccInfo, successUpdateData, badRequestUpdateData, notFoundUpdateData, invalidUpdateData } from "@data/api/account";
 
 const endpoint = "/updateAccount";
@@ -15,13 +15,15 @@ const notFoundMsg = "User not found!";
 const unsupportedMethodCode = 405;
 const unsupportedMethodMsg = `Method \"{method}\" not allowed.`;
 
-test.beforeAll(async ({ authService }, testInfo) => {
+test.beforeAll(async ({ createUser }, testInfo) => {
     console.log(`[BEFORE ALL HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-    const res = await authService.createAccount(testUser);
-    BaseValidator.validateFieldValue(res, "responseCode", 201);
-    console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
-    console.log(`============================================================\n`);
+    await createUser(testUser);
 });
+
+test.beforeEach(async ({}, testInfo) => {
+    console.log(`[DATA TEST] Worker index: ${testInfo.workerIndex}. Created user: ${JSON.stringify(testUser)}`);
+    console.log(`============================================================\n`);
+})
 
 test.describe("Verify Success Update API", () => {
     for (const data of successUpdateData) {
@@ -103,13 +105,8 @@ test.describe("Verify API Update retrieves error message for unsupported HTTP me
     });
 });
 
-test.afterAll(async ({ authService }) => {
+test.afterAll(async ({ trackUserForCleanup }) => {
     console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Deleting test user.`);
-    const userIdentity: UserIdentity = {
-        email: testUser.email,
-        password: testUser.password
-    }
-    const res = await authService.deleteAccount(userIdentity);
-    console.log(`[CLEAN UP] Test user with email: ${testUser.email} has been deleted. Response code: ${res.body.responseCode}`);
+    trackUserForCleanup({ email: testUser.email, password: testUser.password });
 });

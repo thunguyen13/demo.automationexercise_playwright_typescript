@@ -32,9 +32,10 @@ test.describe("Success Delete API", () => {
 });
 
 test.describe("Failed Delete API", () => {
-  test.beforeEach(async ({ createUser }, testInfo) => {
+  test.beforeEach(async ({ createUser, trackUserForCleanup }, testInfo) => {
     console.log(`[BEFORE EACH HOOK] Creating test user account. Worker index: ${testInfo.workerIndex}`);
     await createUser(testUser);
+    trackUserForCleanup({ email: testUser.email, password: testUser.password });
   });
   for (const data of badRequestData) {
     test(`Should retrieve error message for missing field(s): ${data.case}`, async ({ apiClient }) => {
@@ -64,9 +65,10 @@ test.describe("Failed Delete API", () => {
 });
 
 test.describe("Verify API delete retrieves error message for unsupported HTTP method", () => {
-  test.beforeEach(async ({ createUser }, testInfo) => {
+  test.beforeEach(async ({ createUser, trackUserForCleanup }, testInfo) => {
     console.log(`[BEFORE EACH HOOK] Creating test user account. Worker index: ${testInfo.workerIndex}`);
     await createUser(testUser);
+    trackUserForCleanup({ email: testUser.email, password: testUser.password });
   });
   const payloadData = {
     form: {

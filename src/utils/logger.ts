@@ -1,4 +1,7 @@
 import test from "@playwright/test";
+import { statSync } from "fs";
+import { mkdir, appendFile } from 'fs/promises';
+import path from "path";
 
 
 export function step(this: any, stepName?: string) {
@@ -32,4 +35,17 @@ function formattedStepName(stepName: string, args: any[]): string {
             }
         return String(value);
     });
+}
+
+export async function logToFile(workerIndex: number, message: string, filePath: string): Promise<void> {
+    if (filePath === undefined) 
+        throw new Error("Log file path is undefined.");
+    
+    // create the log directory if it doesn't exist
+    await mkdir(path.dirname(filePath), { recursive: true });
+
+    // write the log entry to a file
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] [Worker ${workerIndex}] ${message}\n`;
+    await appendFile(filePath, logEntry, "utf8");
 }

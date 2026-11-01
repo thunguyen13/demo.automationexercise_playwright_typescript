@@ -8,8 +8,13 @@ import path from 'path';
  * https://github.com/motdotla/dotenv
  */
 
-const currentTimeStamp = getVietnameseTimestamp();
-const outputDir = path.join(__dirname, "results", currentTimeStamp);
+const outputDir = process.env.CI
+  ? "playwright-report"
+  : process.env.TEST_OUTPUT_DIR ??
+    path.join(__dirname, "results", getVietnameseTimestamp());
+const reportDir = path.join(outputDir, "html-report");
+
+process.env.TEST_OUTPUT_DIR = outputDir;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,7 +33,7 @@ export default defineConfig({
   reporter: [
     [
       'html', { 
-        outputFolder: process.env.CI ? undefined : outputDir, 
+        outputFolder: reportDir,
         open: 'never' }
     ],
   ],

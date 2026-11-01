@@ -16,13 +16,15 @@ const unsupportedMethodMsg = "This request method is not supported.";
 
 test.describe.configure({ "mode": "parallel" });
 
-test.beforeAll(async ({ authService }, testInfo) => {
+test.beforeAll(async ({ createUser }, testInfo) => {
     console.log(`[BEFORE ALL HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-    const res = await authService.createAccount(testUser);
-    BaseValidator.validateFieldValue(res, "responseCode", 201);
-    console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}. Response code: ${res.body.responseCode}`);
-    console.log(`============================================================\n`);
+    await createUser(testUser);
 });
+
+test.beforeEach(async ({}, testInfo) => {
+    console.log(`[DATA TEST] Worker index: ${testInfo.workerIndex}. Created user: ${JSON.stringify(testUser)}`);
+    console.log(`============================================================\n`);
+})
 
 test.describe("Verify Success Login API", () => {
     test("Should Verify login success with valid credentials",async ({ authService }) => {
@@ -95,13 +97,8 @@ test.describe("Verify API Login retrieves error message for unsupported HTTP met
     });
 });
 
-test.afterAll(async ({ authService }) => {
+test.afterAll(async ({ trackUserForCleanup }) => {
     console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Deleting test user.`);
-    const userIdentity: UserIdentity = {
-        email: testUser.email,
-        password: testUser.password
-    }
-    const res = await authService.deleteAccount(userIdentity);
-    console.log(`[CLEAN UP] Test user with email: ${testUser.email} has been deleted. Response code: ${res.body.responseCode}`);
+    trackUserForCleanup({ email: testUser.email, password: testUser.password });
 });
