@@ -3,7 +3,6 @@ import { SignUpInformationPage } from "@pages/SignUpInformationPage";
 import { test } from "@fixtures/ui/common";
 import { invalidRegisterData_duplicateEmail, invalidRegisterData_invalidFormatField, invalidRegisterData_missingFieldData, validAccInfo } from "@data/ui/account";
 import { AccountCreatedPage } from "@pages/AccountCreatedPage";
-import { BaseValidator } from "@core/api/BaseValidator";
 import { getRequiredField } from "@utils/helpers";
 import { HomePage } from "@pages/HomePage";
 
@@ -11,8 +10,12 @@ const validEmail = getRequiredField(validAccInfo, "email");
 const validPassword = getRequiredField(validAccInfo, "password");
 const validName = getRequiredField(validAccInfo, "name");
 
+test.describe.configure({ mode: "parallel" });
+
 test.describe("Registration flow with valid data", () => {
     test("Should register successfully and navigate to account created page", async ({ page, trackUserForCleanup }) => {
+        console.log(`[TEST] Registering user: ${validEmail}`);
+
         const logInSignUpPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
         const accountCreatedPage = new AccountCreatedPage(page);
@@ -32,6 +35,8 @@ test.describe("Registration flow with valid data", () => {
 
 test.describe("Account information form auto-filling and disabling", () => {
     test("Should auto-filled name field in information form based on name provided in signup form", async ({ page }) => {
+        console.log(`[TEST] Verifying auto-filled name field in information form for user: ${validEmail}`);
+
         const logInSignUpPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
 
@@ -40,6 +45,7 @@ test.describe("Account information form auto-filling and disabling", () => {
         await signUpInformationPage.verifyAutoFilledData("name", validName);
     });
     test("Should auto-filled and disabled email field in information form based on email provided in signup form", async ({ page }) => {
+        console.log(`[TEST] Verifying auto-filled and disabled email field in information form for user: ${validEmail}`);
         const logInSignUpPage = new LogInSignUpPage(page);
         const signUpInformationPage = new SignUpInformationPage(page);
 
@@ -53,6 +59,8 @@ test.describe("Account information form auto-filling and disabling", () => {
 test.describe("Registration flow with empty required fields", () => {
     for (const testCase of invalidRegisterData_missingFieldData) {
         test(`Should display validation when "${testCase.name}"`, async ({ page, trackUserForCleanup }) => {
+            console.log(`[TEST] Case: ${testCase.name}`);
+
             const screen = getRequiredField(testCase, "screen");
             const expectedFieldError = getRequiredField(testCase, "expectedFieldError");
             const signupData = getRequiredField(testCase, "data");
@@ -81,27 +89,16 @@ test.describe("Registration flow with empty required fields", () => {
 });
 
 test.describe("Registration flow with existing email", () => {
-    const accInfo = getRequiredField(invalidRegisterData_duplicateEmail, "data");
-    const email = getRequiredField(accInfo, "email");
-    const password = getRequiredField(accInfo, "password");
-    const name = getRequiredField(accInfo, "name");
-    test.beforeEach(async ({ authService, trackUserForCleanup }) => {
-        console.log(`[BEFORE EACH HOOK] Creating test user: ${email}`);
-        const response = await authService.createAccount(accInfo);
-        BaseValidator.validateFieldValue(response, "responseCode", 201);
-        // Register for cleanup
-        trackUserForCleanup({
-            email: email,
-            password: password,
-        });
-        console.log(`[SETUP] Created test user with email: ${email} for duplicate email registration test.`);
-    })
-    test("Should display error message when email is existing", async ({ page }) => {
+    test("Should display error message when email is existing", async ({ page, createdUser }) => {
+        console.log(`[TEST] Registering user with existing email: ${createdUser.email}`);
+
+        const name = getRequiredField(createdUser, "name");
+        const email = getRequiredField(createdUser, "email");
+
         const errorMessage = getRequiredField(invalidRegisterData_duplicateEmail, "errorMessage");
 
         const logInSignUpPage = new LogInSignUpPage(page);
 
-        console.log(`Testing registration API with duplicate email: ${email}`);
         await logInSignUpPage.navigateTo("signup");
         await logInSignUpPage.signup(name, email);
         await logInSignUpPage.verifyErrorMessage("signup", errorMessage);
@@ -112,6 +109,8 @@ test.describe("Registration flow with existing email", () => {
 test.describe("Registration flow with invalid form data", () => {
     for (const testCase of invalidRegisterData_invalidFormatField) {
         test(`Should display validation when "${testCase.name}"`, async ({ page, trackUserForCleanup }) => {
+            console.log(`[TEST] Case: ${testCase.name}`);
+            
             const screen = getRequiredField(testCase, "screen");
             const expectedFieldError = getRequiredField(testCase, "expectedFieldError");
             const data = getRequiredField(testCase, "data");

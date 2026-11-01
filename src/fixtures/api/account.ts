@@ -47,7 +47,7 @@ export const test = base.extend<Fixtures>({
         user = u;
     });
 
-    console.log(`[CLEANING UP] Deleting test user account: ${user.email}`);
+    console.log(`\n5[CLEANING UP] Deleting test user account: ${user.email}`);
 
     if (user.email != null && user.password != null) {
       const payload = {

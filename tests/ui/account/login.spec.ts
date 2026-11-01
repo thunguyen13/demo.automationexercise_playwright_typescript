@@ -1,7 +1,6 @@
 import { LogInSignUpPage } from "@pages/LogInSignUpPage";
 import { test } from "@fixtures/ui/common";
 import { invalidLoginData, validAccInfo } from "@data/ui/account";
-import { BaseValidator } from "@core/api/BaseValidator";
 import { getRequiredField } from "@utils/helpers";
 import { HomePage } from "@pages/HomePage";
 
@@ -11,16 +10,14 @@ const validName = getRequiredField(validAccInfo, "name");
 
 test.describe.configure({ mode: "parallel" });
 
-test.beforeAll(async ({ authService }) => {
+test.beforeAll(async ({ createUser }) => {
     console.log(`[BEFORE ALL HOOK] Creating test user: ${validEmail}`);
-    const response = await authService.createAccount(validAccInfo);
-    BaseValidator.validateFieldValue(response, "responseCode", 201);
-    console.log(`[SETUP] Created test user with email: ${validEmail} for registration tests.`);
-    console.log(`============================================================\n`);
+    await createUser(validAccInfo);
 });
 
 test.describe("Success Login with valid credentials", () => {
     test("Should login successfully", async ({ page }) => {
+        console.log(`[TEST] Logging in user: ${validEmail}`);
         const logInSignUpPage = new LogInSignUpPage(page);
         const homePage = new HomePage(page);
 
@@ -33,6 +30,7 @@ test.describe("Success Login with valid credentials", () => {
 test.describe("Login unsuccessfully with invalid credentials", () => {
     for (const testCase of invalidLoginData) {
         test(`Should unsuccessfully login when "${testCase.name}"`, async ({ page }) => {
+            console.log(`[TEST] Case: ${testCase.name}`);
             const data = getRequiredField(testCase, "data");
             const expectedFieldError = testCase.expectedFieldError;
             const errorMessage = testCase.errorMessage;
@@ -54,15 +52,8 @@ test.describe("Login unsuccessfully with invalid credentials", () => {
     }
 });
 
-test.afterAll(async ({ authService }) => {
+test.afterAll(async ({ trackUserForCleanup }) => {
     console.log(`\n============================================================`);
-    console.log(`[AFTER ALL HOOK] Attempting to delete test user: ${validEmail}`);
-    const payload = {
-        email: validEmail,
-        password: validPassword,
-    };
-    const res = await authService.deleteAccount(payload);
-    console.log(
-        `[CLEAN UP] Attempted to delete test user with email: ${validEmail}. Response code in body: ${res.body.responseCode}.`
-    );
+    console.log(`[AFTER ALL HOOK] Deleting test user.`);
+    trackUserForCleanup({email: validEmail, password: validPassword});
 });
