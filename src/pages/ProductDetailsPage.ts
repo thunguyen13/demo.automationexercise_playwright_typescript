@@ -69,7 +69,7 @@ export class ProductDetailsPage extends BasePage {
         await this.productDetails.quantityInput.fill(quantity.toString());
         await Promise.all([
             this.page.waitForResponse(
-                response => response.url().includes("/add_to_cart")
+                response => response.url().includes("/add_to_cart") && response.status() === 200
             ),
             this.productDetails.addToCartButton.click()
         ])

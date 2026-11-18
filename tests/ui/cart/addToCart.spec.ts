@@ -10,6 +10,8 @@ import { getRandomIndexList, getRandomInt } from '@utils/helpers';
 
 test.describe("Add product to cart", () => {
     test("Verify add product to cart from home page", async ({ page }) => {
+        console.log(`[TEST] Verify add product to cart from home page`);
+
         const homePage = new HomePage(page);
         const listProduct = homePage.listProduct;
         const cartModal = listProduct.cartModal;
@@ -32,6 +34,8 @@ test.describe("Add product to cart", () => {
     });
 
     test("Verify add product to cart from product page", async ({ page }) => {
+        console.log(`[TEST] Verify add product to cart from product page`);
+
         const productPage = new ProductPage(page);
         const header = productPage.header;
         const listProduct = productPage.listProduct;
@@ -57,6 +61,8 @@ test.describe("Add product to cart", () => {
     });
 
     test("Verify add product to cart from product details page", async ({ page }) => {
+        console.log(`[TEST] Verify add product to cart from product details page`);
+
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
@@ -82,6 +88,8 @@ test.describe("Add product to cart", () => {
     });
 
     test("Verify add product after search", async ({ page }) => {
+        console.log(`[TEST] Verify add product after search`);
+
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
@@ -107,6 +115,8 @@ test.describe("Add product to cart", () => {
     });
 
     test("Verify add product after filter by category", async ({ page }) => {
+        console.log(`[TEST] Verify add product after filter by category`);
+
         const productPage = new ProductPage(page);
         const header = productPage.header;
         const listProduct = productPage.listProduct;
@@ -136,6 +146,8 @@ test.describe("Add product to cart", () => {
     });
 
     test("Verify add product after filter by brand", async ({ page }) => {
+        console.log(`[TEST] Verify add product after filter by brand`);
+
         const productPage = new ProductPage(page);
         const header = productPage.header;
         const listProduct = productPage.listProduct;
@@ -165,6 +177,8 @@ test.describe("Add product to cart", () => {
 
 test.describe("Add multiple products to cart", () => {
     test("Verify add multiple products to cart from product page", async ({ page }) => {
+        console.log(`[TEST] Verify add multiple products to cart from product page`);
+
         const productPage = new ProductPage(page);
         const header = productPage.header;
         const listProduct = productPage.listProduct;
@@ -189,6 +203,8 @@ test.describe("Add multiple products to cart", () => {
     });
 
     test("Verify add multiple products to cart from product details page", async ({ page }) => {
+        console.log(`[TEST] Verify add multiple products to cart from product details page`);
+        
         const productPage = new ProductPage(page);
         const header = productPage.header;
         const listProduct = productPage.listProduct;
@@ -205,11 +221,11 @@ test.describe("Add multiple products to cart", () => {
             await listProduct.clickViewProductButton({index});
             const productDetails = await productDetailsPage.getProductDetails();
             const quantity = getRandomInt(1, 5);
+            await productDetailsPage.addProductToCart(quantity);
             productInfo.push({
                 ...productDetails,
                 quantity
             });
-            await productDetailsPage.addProductToCart(quantity);
             await cartModal.clickContinueShopping();
             await productDetailsPage.goBack();
         }

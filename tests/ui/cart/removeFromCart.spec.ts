@@ -42,11 +42,11 @@ test.describe("Remove From Cart", () => {
         const addedProduct: CartProduct[] = [];
         for (const index of randomIndexes) {
             const productInfo = await listProduct.getProductCardInfo({ index });
+            await listProduct.clickAddToCartButton({ index });
             addedProduct.push({
                 ...productInfo,
                 quantity: 1
             });
-            await listProduct.clickAddToCartButton({ index });
             await cartModal.clickContinueShopping();
         }
         await header.clickMenuItem("cart");
@@ -67,40 +67,45 @@ test.describe("Remove From Cart", () => {
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
         const randomIndex = getRandomInt(0, productCardCount - 1);
-        const productInfo = await listProduct.getProductCardInfo({ index: randomIndex });
+        await listProduct.clickViewProductButton({ index: randomIndex });
+        const productInfo = await productDetailsPage.getProductDetails();
+        const quantity = getRandomInt(2, 4);
+        await productDetailsPage.addProductToCart(quantity);
         const addedProduct: CartProduct[] = [
             {
                 ...productInfo,
-                quantity: 2
+                quantity
             }
-        ];
-        await listProduct.clickAddToCartButton({ index: randomIndex });
+        ]
         await cartModal.clickViewCart();
+        await cartTable.verifyProductsInCart(addedProduct);
         await cartPage.deleteProducts(addedProduct);
         await cartPage.verifyCartIsEmpty();
     });
     
-    test("Should remove all products", async ({ page }) => {
+    test("Should remove all products", async ({ page, }) => {
         const productPage = new ProductPage(page);
         const header = productPage.header;
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
         const cartModal = productDetailsPage.cartModal;
         const cartPage = new CartPage(page);
-        const cartTable = cartPage.cartTable;
     
         await productPage.navigateTo();
         const productCardCount = await listProduct.getProductCardCount();
         const randomIndexes = getRandomIndexList(productCardCount, 2);
         const addedProduct: CartProduct[] = [];
         for (const index of randomIndexes) {
-            const productInfo = await listProduct.getProductCardInfo({ index });
+            await listProduct.clickViewProductButton({ index });
+            const quantity = getRandomInt(2, 4);
+            const productInfo = await productDetailsPage.getProductDetails();
+            await productDetailsPage.addProductToCart(quantity);
             addedProduct.push({
                 ...productInfo,
-                quantity: getRandomInt(2, 4)
+                quantity: quantity
             });
-            await listProduct.clickAddToCartButton({ index });
             await cartModal.clickContinueShopping();
+            await productDetailsPage.goBack();
         }
         await header.clickMenuItem("cart");
         await cartPage.deleteProducts(addedProduct);

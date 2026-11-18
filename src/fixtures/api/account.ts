@@ -47,7 +47,7 @@ export const test = base.extend<Fixtures>({
         user = u;
     });
 
-    console.log(`\n5[CLEANING UP] Deleting test user account: ${user.email}`);
+    console.log(`\n[CLEANING UP] Deleting test user account: ${user.email}`);
 
     if (user.email != null && user.password != null) {
       const payload = {
@@ -60,6 +60,9 @@ export const test = base.extend<Fixtures>({
       );
       const testFilePath = path.relative(process.cwd(), testInfo.file);
       await logToFile(testInfo.workerIndex, `[${testFilePath}] [CLEAN UP] [DELETE] | ${user.email} - ${user.password} | Response code: ${res.body.responseCode}`, logFilePath);
+      if (res.body.responseCode !== 200 && res.body.responseCode !== 404) {
+        throw new Error(`[CLEAN UP] Failed to delete test user with email: ${user.email}. Response code in body: ${res.body.responseCode}.`);
+      }
     } else {
         console.log(
           "[CLEAN UP] No user information provided for cleanup. Skipping deletion."
