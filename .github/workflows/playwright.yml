@@ -31,7 +31,7 @@ jobs:
         path: playwright-report/
         retention-days: 15
   ui_tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       EMAIL: ${{ secrets.EMAIL }}
       PASSWORD: ${{ secrets.PASSWORD }}
