@@ -16,7 +16,7 @@ const randomString = generateUniqueNumberString(100, 999, true);
 
 export const validAccInfo: UserInfo = {
   email: `testUser_${randomString}@demo.abc`,
-  password: getEnv("PASSWORD"), //"123456",
+  password: getEnv("PASSWORD"),
   name: `Test User - ${randomString}`,
   title: "Mr",
   birth_date: "1",

@@ -32,7 +32,7 @@ type TypeGetUserDetail = {
 
 export const validAccInfo: UserInfo = {
   email: `test_user_${randomString}@demo.abc`,
-  password: getEnv("PASSWORD"), //"123456",
+  password: "123456",
   name: `Test User - ${randomString}`,
   title: "Mr",
   birth_date: "1",
