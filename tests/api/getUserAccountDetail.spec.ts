@@ -1,6 +1,6 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { test } from "@fixtures/api/account";
-import { UserIdentity, UserInfo } from "@services/AuthService";
+import { UserInfo } from "@services/AuthService";
 import { validAccInfo, failureGetUserDetailData } from "@data/api/account";
 import { userDetailSchema } from "src/models/account.schema";
 
@@ -14,18 +14,22 @@ const unsupportedMethodMsg = "This request method is not supported.";
 
 test.describe.configure({ "mode": "parallel" });
 
-test.beforeAll(async ({ authService }, testInfo) => {
+test.beforeAll(async ({ createUser }, testInfo) => {
     console.log(`[BEFORE ALL HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-    await authService.createAccount(testUser);
-    console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
+    await createUser(testUser);
 });
 
+test.beforeEach(async ({}, testInfo) => {
+    console.log(`[DATA TEST] Worker index: ${testInfo.workerIndex}. Created user: ${JSON.stringify(testUser)}`);
+    console.log(`============================================================\n`);
+})
+
 test.describe("Success Get User Detail By Email API", () => {
-    test("Should get user detail by email successfully",async ({ authService }) => {
+    test("Should get user detail by email successfully", async ({ authService }) => {
         const email = testUser.email;
         const userDetail: Partial<UserInfo>= { ...testUser };
         delete userDetail.password;
-        console.log(`Testing get user detail by email: ${email}`);
+        console.log(`TESTING GET USER DETAILS by email: ${email}`);
         const response = await authService.getUserDetailByEmail({ email });
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateSchema(response, userDetailSchema, { soft: true });
@@ -40,7 +44,7 @@ test.describe("Failed Get User Detail By Email API", () => {
             const payloadData = {
                 params: data.payloadData
             };
-            console.log(`Testing getUserDetail with payload: ${JSON.stringify(payloadData.params)}`);
+            console.log(`TESTING GET USER DETAILS with payload: ${JSON.stringify(payloadData.params)}`);
             const response = await apiClient.get(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || defaultErrorCode);
@@ -56,21 +60,21 @@ test.describe("Verify API Get User Detail retrieves error message for unsupporte
         }
     };
     test("Should retrieve error message for unsupported HTTP method: POST", async ({ apiClient }) => {
-        console.log(`Testing getUserDetail with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.params)}`);
+        console.log(`TESTING GET USER DETAILS with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.params)}`);
         const response = await apiClient.post(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
         BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: PUT", async ({ apiClient }) => {
-        console.log(`Testing getUserDetail with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.params)}`);
+        console.log(`TESTING GET USER DETAILS with unsupported HTTP method: PUT and payload: ${JSON.stringify(payloadData.params)}`);
         const response = await apiClient.put(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
         BaseValidator.validateErrorResponse(response, unsupportedMethodMsg);
     });
     test("Should retrieve error message for unsupported HTTP method: DELETE", async ({ apiClient }) => {
-        console.log(`Testing getUserDetail with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.params)}`);
+        console.log(`TESTING GET USER DETAILS with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.params)}`);
         const response = await apiClient.delete(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, successCode);
         BaseValidator.validateFieldValue(response, "responseCode", unsupportedMethodCode);
@@ -78,12 +82,8 @@ test.describe("Verify API Get User Detail retrieves error message for unsupporte
     });
 });
 
-test.afterAll(async ({ authService }) => {
-    console.log(`[AFTER ALL HOOK] Deleting test user.`);
-    const userIdentity: UserIdentity = {
-        email: testUser.email,
-        password: testUser.password
-    }
-    const res = await authService.deleteAccount(userIdentity);
-    console.log(`[CLEAN UP] Test user with email: ${testUser.email} has been deleted. Response code: ${res.body.responseCode}`);
+test.afterAll(async ({ trackUserForCleanup }) => {
+    console.log(`\n============================================================`);
+    console.log(`[AFTER ALL HOOK] Deleting test user account.`);
+    trackUserForCleanup({ email: testUser.email, password: testUser.password });
 });

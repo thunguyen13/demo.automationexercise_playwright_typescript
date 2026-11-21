@@ -17,6 +17,8 @@ const uiTest = base.extend<UIFixtures>({
         await use();
     }, { auto: true }],
     preparedCartProducts: async ({ page }, use) => {
+        console.log(`[FIXTURE - preparedCartProducts] Preparing random products to add to cart...`);
+
         const homePage = new HomePage(page);
         const listProduct = homePage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
@@ -31,14 +33,17 @@ const uiTest = base.extend<UIFixtures>({
             await listProduct.clickViewProductButton({index: index});
             const productInfo = await productDetailsPage.getProductDetails();
             const quantity = getRandomInt(1, 3);
+            await productDetailsPage.addProductToCart(quantity);
             addedProduct.push({
                 ...productInfo,
                 quantity
             });
-            await productDetailsPage.addProductToCart(quantity);
             await cartModal.clickContinueShopping();
             await productDetailsPage.goBack();
         }
+
+        console.log(`[FIXTURE - preparedCartProducts] Added ${addedProduct.length} products to cart:`, JSON.stringify(addedProduct, null, 2));
+        console.log(`============================================================\n`);
 
         await use(addedProduct);
     }

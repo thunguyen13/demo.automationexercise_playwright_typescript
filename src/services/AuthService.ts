@@ -1,5 +1,5 @@
 import { ApiClient, RequestOption } from "@core/api/ApiClient";
-import { cleanUndefinedValues } from "@utils/helpers";
+import { cleanUndefinedFields } from "@utils/helpers";
 
 export interface UserIdentity {
     email: string;
@@ -60,7 +60,7 @@ export class AuthService {
     async createAccount(payloadData: Partial<UserInfo>) {
         const endpoint = "/createAccount";
         const payload: RequestOption["Post"] = {
-            form: cleanUndefinedValues(payloadData)
+            form: cleanUndefinedFields(payloadData)
         };
         const response = await this.client.post(endpoint, payload);
         return response;
@@ -91,7 +91,7 @@ export class AuthService {
     async updateAccount(payloadData: Partial<UserInfo>) {
         const endpoint = "/updateAccount";
         const payload: RequestOption["Put"] = { 
-            form: cleanUndefinedValues(payloadData)
+            form: cleanUndefinedFields(payloadData)
         };
         const response = await this.client.put(endpoint, payload);
         return response;

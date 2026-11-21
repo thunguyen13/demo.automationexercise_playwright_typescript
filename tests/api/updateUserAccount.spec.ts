@@ -1,6 +1,6 @@
 import { BaseValidator } from "@core/api/BaseValidator";
 import { test } from "@fixtures/api/account";
-import { UserIdentity, UserInfo } from "@services/AuthService";
+import { UserInfo } from "@services/AuthService";
 import { validAccInfo, successUpdateData, badRequestUpdateData, notFoundUpdateData, invalidUpdateData } from "@data/api/account";
 
 const endpoint = "/updateAccount";
@@ -15,17 +15,21 @@ const notFoundMsg = "User not found!";
 const unsupportedMethodCode = 405;
 const unsupportedMethodMsg = `Method \"{method}\" not allowed.`;
 
-test.beforeAll(async ({ authService }, testInfo) => {
+test.beforeAll(async ({ createUser }, testInfo) => {
     console.log(`[BEFORE ALL HOOK] Creating test user. Worker index: ${testInfo.workerIndex}`);
-    await authService.createAccount(testUser);
-    console.log(`[CREATED] Test user has been created with email: ${testUser.email} and password: ${testUser.password}`);
+    await createUser(testUser);
 });
+
+test.beforeEach(async ({}, testInfo) => {
+    console.log(`[DATA TEST] Worker index: ${testInfo.workerIndex}. Created user: ${JSON.stringify(testUser)}`);
+    console.log(`============================================================\n`);
+})
 
 test.describe("Verify Success Update API", () => {
     for (const data of successUpdateData) {
         test(`Should Verify update success with: ${data.case}`,async ({ authService }) => {
             const updateData = data.payloadData;
-            console.log(`Testing update with payload: ${JSON.stringify(updateData)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(updateData)}`);
             const response = await authService.updateAccount(updateData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", successCode);
@@ -40,7 +44,7 @@ test.describe("Verify Failed Update API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing update with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.put(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || badRequestCode);
@@ -52,7 +56,7 @@ test.describe("Verify Failed Update API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing update with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.put(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || notFoundCode);
@@ -64,7 +68,7 @@ test.describe("Verify Failed Update API", () => {
             const payloadData = {
                 form: data.payloadData
             };
-            console.log(`Testing update with payload: ${JSON.stringify(payloadData.form)}`);
+            console.log(`TESTING UPDATE ACCOUNT with payload: ${JSON.stringify(payloadData.form)}`);
             const response = await apiClient.put(endpoint, payloadData);
             BaseValidator.validateStatusCode(response, successCode);
             BaseValidator.validateFieldValue(response, "responseCode", data.code || badRequestCode);
@@ -82,31 +86,27 @@ test.describe("Verify API Update retrieves error message for unsupported HTTP me
         }
     }
     test("Should retrieve error message for unsupported HTTP method: GET", async ({ apiClient }) => {
-        console.log(`Testing update with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING UPDATE ACCOUNT with unsupported HTTP method: GET and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.get(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, unsupportedMethodCode);
         BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "GET"));
     });
     test("Should retrieve error message for unsupported HTTP method: POST", async ({ apiClient }) => {
-        console.log(`Testing update with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING UPDATE ACCOUNT with unsupported HTTP method: POST and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.post(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, unsupportedMethodCode);
         BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "POST"));
     });
     test("Should retrieve error message for unsupported HTTP method: DELETE", async ({ apiClient }) => {
-        console.log(`Testing update with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
+        console.log(`TESTING UPDATE ACCOUNT with unsupported HTTP method: DELETE and payload: ${JSON.stringify(payloadData.form)}`);
         const response = await apiClient.delete(endpoint, payloadData);
         BaseValidator.validateStatusCode(response, unsupportedMethodCode);
         BaseValidator.validateFieldValue(response, "detail", unsupportedMethodMsg.replace("{method}", "DELETE"));
     });
 });
 
-test.afterAll(async ({ authService }) => {
+test.afterAll(async ({ trackUserForCleanup }) => {
+    console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Deleting test user.`);
-    const userIdentity: UserIdentity = {
-        email: testUser.email,
-        password: testUser.password
-    }
-    const res = await authService.deleteAccount(userIdentity);
-    console.log(`[CLEAN UP] Test user with email: ${testUser.email} has been deleted. Response code: ${res.body.responseCode}`);
+    trackUserForCleanup({ email: testUser.email, password: testUser.password });
 });

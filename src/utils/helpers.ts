@@ -19,11 +19,11 @@ export function getVietnameseTimestamp(): string {
 }
 
 /**
- * To clean an object of undefined values by filtering out the entries with undefined values and returning a new object with only the defined values
- * @param obj object to be cleaned of undefined values
- * @returns object with undefined values removed
+ * To remove undefined fields from an object
+ * @param obj Object to remove undefined fields from
+ * @returns Object with undefined fields removed
  */
-export function cleanUndefinedValues(obj: Record<any, any>) {
+export function cleanUndefinedFields(obj: Record<any, any>) {
     const entries = Object.entries(obj);
     const filteredEntries = entries.filter(([_, v]) => v !== undefined);
     return Object.fromEntries(filteredEntries);

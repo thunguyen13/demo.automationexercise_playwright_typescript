@@ -54,7 +54,7 @@ export class CartPage extends BasePage {
             const row = this.cartTable.getProductRow(product);
             await Promise.all([
                 this.page.waitForResponse(
-                    response => response.url().includes("/delete_cart")
+                    response => response.url().includes("/delete_cart") && response.status() === 200
                 ),
                 this.deleteButton(row).click()
             ])

@@ -12,41 +12,37 @@ import { buildUserData, generateUniqueEmailAndName } from '@utils/dataHelpers';
 import { getRandomIndexList, getRandomInt } from '@utils/helpers';
 
 test.describe("Address Details Verification - Full Infomation", () => {
-    const userInfo = buildUserData(validAccInfo, {
-        overrides: generateUniqueEmailAndName()
-    }) as UserInfo;
-
-    test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
-        console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
-        const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
-        BaseValidator.validateStatusCode(res, 200);
-        console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+    test.beforeEach(async ({ page, createdUser }) => {
+        console.log("[BEFORE EACH HOOK] Logging in with test user for checkout tests: " + createdUser.email);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
         
         await loginPage.navigateTo();
-        await loginPage.login(userInfo.email, userInfo.password);
-        await header.verifyLoggedInAsText(userInfo.name);
+        await loginPage.login(createdUser.email, createdUser.password);
+        await header.verifyLoggedInAsText(createdUser.name);
+
+        console.log("============================================================\n");
     });
 
-    test("Verify address details when account has full information", async ({ page, preparedCartProducts }) => {
+    test("Verify address details when account has full information", async ({ page, preparedCartProducts, createdUser }) => {
+        console.log("[TEST] Verify address details when account has full information for user: " + createdUser.email);
+
         const cartPage = new CartPage(page);
         const cartTable = cartPage.cartTable;
         const checkoutPage = new CheckoutPage(page);
         const addressDetails: AddressDetails = {
-            title: userInfo.title,
-            firstname: userInfo.firstname,
-            lastname: userInfo.lastname,
-            address1: userInfo.address1,
-            address2: userInfo.address2 || "",
-            company: userInfo.company,
-            city: userInfo.city,
-            state: userInfo.state,
-            zipcode: userInfo.zipcode,
-            country: typeof userInfo.country === "string" ? userInfo.country : countryOptions[userInfo.country],
-            mobile_number: userInfo.mobile_number,
+            title: createdUser.title,
+            firstname: createdUser.firstname,
+            lastname: createdUser.lastname,
+            address1: createdUser.address1,
+            address2: createdUser.address2 || "",
+            company: createdUser.company,
+            city: createdUser.city,
+            state: createdUser.state,
+            zipcode: createdUser.zipcode,
+            country: typeof createdUser.country === "string" ? createdUser.country : countryOptions[createdUser.country],
+            mobile_number: createdUser.mobile_number,
         };
 
         await cartPage.navigateTo();
@@ -66,22 +62,25 @@ test.describe("Address Details Verification - Only Required Infomation", () => {
         deleteFields: optionalFields
     }) as UserInfo;
 
-    test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
-        console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
-        const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
-        BaseValidator.validateStatusCode(res, 200);
-        console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+    test.beforeEach(async ({ page, createUser, trackUserForCleanup }) => {
+        console.log("[BEFORE EACH HOOK] Creating test user for login tests: " + userInfo.email);
+        await createUser(userInfo);
+        trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
 
+        console.log("[BEFORE EACH HOOK] Logging in with test user for checkout tests: " + userInfo.email);
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
         
         await loginPage.navigateTo();
         await loginPage.login(userInfo.email, userInfo.password);
         await header.verifyLoggedInAsText(userInfo.name);
+
+        console.log("============================================================\n");
     });
 
     test("Verify address details when account has full information", async ({ page, preparedCartProducts }) => {
+        console.log("[TEST] Verify address details when account has only required information for user: " + userInfo.email);
+
         const cartPage = new CartPage(page);
         const cartTable = cartPage.cartTable;
         const checkoutPage = new CheckoutPage(page);
@@ -107,26 +106,22 @@ test.describe("Address Details Verification - Only Required Infomation", () => {
 });
 
 test.describe("Order Verification", () => {
-    const userInfo = buildUserData(validAccInfo, {
-        overrides: generateUniqueEmailAndName()
-    }) as UserInfo;
-
-    test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
-        console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
-        const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
-        BaseValidator.validateStatusCode(res, 200);
-        console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+    test.beforeEach(async ({ page, createdUser }) => {
+        console.log("[BEFORE EACH HOOK] Logging in with test user for checkout tests: " + createdUser.email);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
         
         await loginPage.navigateTo();
-        await loginPage.login(userInfo.email, userInfo.password);
-        await header.verifyLoggedInAsText(userInfo.name);
+        await loginPage.login(createdUser.email, createdUser.password);
+        await header.verifyLoggedInAsText(createdUser.name);
+
+        console.log("============================================================\n");
     });
 
     test("Verify order information matches cart and total amount is correct", async ({ page, preparedCartProducts }) => {
+        console.log("[TEST] Verify order information matches cart and total amount is correct");
+
         const cartPage = new CartPage(page);
         const cartTableInCart = cartPage.cartTable;
         const checkoutPage = new CheckoutPage(page);
@@ -142,6 +137,8 @@ test.describe("Order Verification", () => {
     });
 
     test("Verify order information matches cart after deleting a product and total amount is correct", async ({ page }) => {
+        console.log("[TEST] Verify order information matches cart after deleting a product and total amount is correct");
+
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
         const cartModal = listProduct.cartModal;
@@ -181,26 +178,22 @@ test.describe("Order Verification", () => {
 });
 
 test.describe("Enable to Leave A Comment", () => {
-    const userInfo = buildUserData(validAccInfo, {
-        overrides: generateUniqueEmailAndName()
-    }) as UserInfo;
-
-    test.beforeEach(async ({ page, authService, trackUserForCleanup }) => {
-        console.log("[BEFORE ALL HOOK] Creating test user for login tests: " + userInfo.email);
-        const res = await authService.createAccount(userInfo);
-        await trackUserForCleanup({ email: userInfo.email, password: userInfo.password });
-        BaseValidator.validateStatusCode(res, 200);
-        console.log("[SETUP] Created test user for login tests: " + userInfo.email);
+    test.beforeEach(async ({ page, createdUser }) => {
+        console.log("[BEFORE EACH HOOK] Logging in with test user for checkout tests: " + createdUser.email);
 
         const loginPage = new LogInSignUpPage(page);
         const header = loginPage.header;
         
         await loginPage.navigateTo();
-        await loginPage.login(userInfo.email, userInfo.password);
-        await header.verifyLoggedInAsText(userInfo.name);
+        await loginPage.login(createdUser.email, createdUser.password);
+        await header.verifyLoggedInAsText(createdUser.name);
+
+        console.log("============================================================\n");
     });
 
     test("Verify user can leave a comment", async ({ page, preparedCartProducts }) => {
+        console.log("[TEST] Verify user can leave a comment");
+        
         const cartPage = new CartPage(page);
         const checkoutPage = new CheckoutPage(page);
         const comment = "This is a test comment for the order.";

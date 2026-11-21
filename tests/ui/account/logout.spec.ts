@@ -9,22 +9,23 @@ const validEmail = getRequiredField(validAccInfo, "email");
 const validPassword = getRequiredField(validAccInfo, "password");
 const validName = getRequiredField(validAccInfo, "name");
 
-test.beforeAll(async ({ authService }) => {
+test.beforeAll(async ({ createUser }) => {
     console.log(`[BEFORE ALL HOOK] Creating test user: ${validEmail}`);
-    const response = await authService.createAccount(validAccInfo);
-    BaseValidator.validateFieldValue(response, "responseCode", 201);
-    console.log(`[SETUP] Created test user with email: ${validEmail} for registration tests.`);
+    await createUser(validAccInfo);
 });
 
 test.describe("Logout", () => {
     test.beforeEach(async ({ page }) => {
+        console.log(`[BEFORE EACH HOOK] Logged in as ${validEmail} before test execution.`);
         const logInSignUpPage = new LogInSignUpPage(page);
         const homePage = new HomePage(page);
         await logInSignUpPage.navigateTo("login");
         await logInSignUpPage.login(validEmail, validPassword);
         await homePage.header.verifyLoggedInAsText(`${validName}`);
+        console.log('');
     });
     test("Should logout successfully", async ({ page }) => {
+        console.log(`[TEST] Logging out user: ${validEmail}`);
         const homePage = new HomePage(page);
         const logInSignUpPage = new LogInSignUpPage(page);
 
@@ -34,6 +35,7 @@ test.describe("Logout", () => {
         await logInSignUpPage.header.verifyItemIsHidden("logOut");
     });
     test("Should logout cross-tab successfully", async ({ page, context }) => {
+        console.log(`[TEST] Logging out user: ${validEmail} in one tab and verifying logout session in another tab`);
         const homePage = new HomePage(page);
         const logInSignUpPage = new LogInSignUpPage(page);
 
@@ -54,14 +56,8 @@ test.describe("Logout", () => {
     });
 });
 
-test.afterAll(async ({ authService }) => {
+test.afterAll(async ({ trackUserForCleanup }) => {
+    console.log(`\n============================================================`);
     console.log(`[AFTER ALL HOOK] Attempting to delete test user: ${validEmail}`);
-    const payload = {
-        email: validEmail,
-        password: validPassword,
-    };
-    const res = await authService.deleteAccount(payload);
-    console.log(
-        `[CLEAN UP] Attempted to delete test user with email: ${validEmail}. Response code in body: ${res.body.responseCode}.`
-    );
+    trackUserForCleanup({email: validEmail, password: validPassword});
 });

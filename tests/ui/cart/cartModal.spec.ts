@@ -8,6 +8,8 @@ import { getRandomInt } from '@utils/helpers';
 
 test.describe("Cart Modal In Product List", () => {
     test("Verify display of cart modal and functionality of 'Continue Shopping' button", async ({ page }) => {
+        console.log(`[TEST] Verify display of cart modal and functionality of 'Continue Shopping' button`);
+
         const homePage = new HomePage(page);
         const listProduct = homePage.listProduct;
         const cartModal = listProduct.cartModal;
@@ -23,6 +25,8 @@ test.describe("Cart Modal In Product List", () => {
     });
 
     test("Verify display of cart modal and functionality of 'View Cart' button", async ({ page }) => {
+        console.log(`[TEST] Verify display of cart modal and functionality of 'View Cart' button`);
+
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
@@ -42,6 +46,8 @@ test.describe("Cart Modal In Product List", () => {
 
 test.describe("Cart Modal In Product Details", () => {
     test("Verify 'Continue Shopping' button closes the cart modal", async ({ page }) => {
+        console.log(`[TEST] Verify 'Continue Shopping' button closes the cart modal`);
+
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);
@@ -60,6 +66,8 @@ test.describe("Cart Modal In Product Details", () => {
     });
 
     test("Verify 'View Cart' button navigates to the cart page", async ({ page }) => {
+        console.log(`[TEST] Verify 'View Cart' button navigates to the cart page`);
+        
         const productPage = new ProductPage(page);
         const listProduct = productPage.listProduct;
         const productDetailsPage = new ProductDetailsPage(page);

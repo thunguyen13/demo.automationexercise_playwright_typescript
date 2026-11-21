@@ -1,3 +1,4 @@
+import { getEnv } from "@config/env.config";
 import { requiredFields } from "@pages/SignUpInformationPage";
 import { UserInfo } from "@services/AuthService";
 import { buildUserData, generateUniqueEmailAndName } from "@utils/dataHelpers";
@@ -15,7 +16,7 @@ const randomString = generateUniqueNumberString(100, 999, true);
 
 export const validAccInfo: UserInfo = {
   email: `testUser_${randomString}@demo.abc`,
-  password: "123456",
+  password: getEnv("PASSWORD"),
   name: `Test User - ${randomString}`,
   title: "Mr",
   birth_date: "1",
@@ -35,7 +36,7 @@ export const validAccInfo: UserInfo = {
   offers: true,
 };
 
-export const invalidRegisterData_misingFieldData: Array<Case> = [
+export const invalidRegisterData_missingFieldData: Array<Case> = [
   {
     name: "Email field is empty",
     screen: 1,
